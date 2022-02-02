@@ -1,9 +1,11 @@
 package kz.sdu.bot.marketPlaceBot.component;
 
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-public class MerketPlaceBotApp extends TelegramLongPollingBot {
+@Component
+public class MarketPlaceBotApp extends TelegramLongPollingBot {
     @Override
     public String getBotUsername() {
         return "sdu_market_place_bot";
