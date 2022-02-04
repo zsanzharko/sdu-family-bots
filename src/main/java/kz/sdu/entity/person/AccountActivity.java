@@ -1,4 +1,4 @@
-package kz.sdu.bot.entity.person;
+package kz.sdu.entity.person;
 
 import lombok.Data;
 import org.telegram.telegrambots.meta.api.methods.send.*;

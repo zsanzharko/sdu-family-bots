@@ -1,7 +1,7 @@
 package kz.sdu.bot.eventsBot.service;
 
-import kz.sdu.bot.entity.Event;
-import kz.sdu.bot.entity.person.Account;
+import kz.sdu.entity.Event;
+import kz.sdu.entity.person.Account;
 import lombok.Data;
 
 import java.util.ArrayList;

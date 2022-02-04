@@ -1,7 +1,7 @@
 package kz.sdu.sdubotsfamily;
 
 import kz.sdu.bot.challengeBot.component.ChallengeBotApp;
-import kz.sdu.bot.entity.Event;
+import kz.sdu.entity.Event;
 import kz.sdu.bot.eventsBot.component.EventsBotApp;
 import kz.sdu.bot.helpStudentBot.component.HelpStudentBotApp;
 import kz.sdu.bot.lostAndFoundBot.component.LostAndFoundBotApp;

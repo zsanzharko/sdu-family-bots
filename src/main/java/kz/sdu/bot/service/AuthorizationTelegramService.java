@@ -1,6 +1,6 @@
-package kz.sdu.bot.eventsBot.service;
+package kz.sdu.bot.service;
 
-import kz.sdu.bot.entity.person.Account;
+import kz.sdu.entity.person.Account;
 import org.telegram.telegrambots.meta.api.objects.ChatLocation;
 
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ public class AuthorizationTelegramService {
             int smallest_index = 0;
             Account smallest_account = Account.getAccountList().get(smallest_index);
             for (int j = 1; j < Account.getAccountList().size(); j++) {
-                if(Account.getAccountList().get(j).getID() < smallest_account.getID()) {
+                if(Account.getAccountList().get(j).getId() < smallest_account.getId()) {
                     smallest_account = Account.getAccountList().get(j);
                     smallest_index = j;
                 }
@@ -62,7 +62,7 @@ public class AuthorizationTelegramService {
         int high = accounts.size() - 1;
         while (low <= high) {
             int mid = (low + high) / 2;
-            Long guess = accounts.get(mid).getID();
+            Long guess = accounts.get(mid).getId();
             if (Objects.equals(guess, ID)) {
                 return mid;
             } if (guess > ID) {

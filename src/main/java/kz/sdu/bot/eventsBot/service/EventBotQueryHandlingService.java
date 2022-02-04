@@ -1,6 +1,7 @@
 package kz.sdu.bot.eventsBot.service;
 
-import kz.sdu.bot.entity.Event;
+import kz.sdu.bot.service.AuthorizationTelegramService;
+import kz.sdu.entity.Event;
 import kz.sdu.bot.utils.SendMessages;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
@@ -12,32 +13,40 @@ import java.util.Arrays;
 import java.util.List;
 
 public class EventBotQueryHandlingService extends EventBotService {
-    private String chatId;
-    private String callbackData;
 
+    private final String callbackData;
     private int index = 0;
 
-    public EventBotQueryHandlingService() {
-    }
-
-    public void setUpdate(Update update) {
-        // Getting data in user
-        Long id = update.getCallbackQuery().getFrom().getId();
-        this.chatId = update.getCallbackQuery().getMessage().getChatId().toString();
+    public EventBotQueryHandlingService(Update update) {
+        super(
+                update.getMessage().getChat().getId(),
+                update.getMessage().getChatId().toString(),
+                update.getMessage().getChat().getUserName() != null ?
+                        update.getMessage().getChat().getUserName() :
+                        "null",
+                update.getMessage().getChat().getFirstName(),
+                update.getMessage().getChat().getLastName(),
+                AuthorizationTelegramService.authLogPerson(
+                        update.getMessage().getChat().getId(),
+                        update.getMessage().getChatId().toString(),
+                        update.getMessage().getChat().getUserName() != null ?
+                                update.getMessage().getChat().getUserName() :
+                                "null",
+                        update.getMessage().getChat().getFirstName(),
+                        update.getMessage().getChat().getLastName()
+                )
+        );
         this.callbackData = update.getCallbackQuery().getData();
-
-        setAccount(AuthorizationTelegramService.authLogPerson(id, chatId));
-
         if (callbackData.contains("&index"))
             this.index = Integer.parseInt(callbackData.substring(callbackData.indexOf("&index=") + 7));
     }
 
     public void editAccount() {
-        SendMessage message = SendMessages.sendEditMessage(callbackData, chatId, getAccount());
+        SendMessage message = SendMessages.sendEditMessage(callbackData, getChatId(), getAccount());
         try {
             // check if it is account setting, or we can do edit this account
             if (callbackData.length() == 13) {
-                execute(SendMessages.getEditAccountTools(chatId, getAccount()));
+                execute(SendMessages.getEditAccountTools(getChatId(), getAccount()));
             } else {
                 execute(message);
                 getAccount().getActivity().setLatestMessage(message);
@@ -51,14 +60,14 @@ public class EventBotQueryHandlingService extends EventBotService {
         List<Event> likedEvents = getAccount().getUser().getEventService().getFavoriteEvent();
         if (likedEvents.size() == 0) {
             try {
-                execute(SendMessages.sendMessage(chatId, "Your liked events is empty"));
+                execute(SendMessages.sendMessage(getChatId(), "Your liked events is empty"));
             } catch (TelegramApiException e) {
                 e.printStackTrace();
             }
             return;
         }
-        deleteEventMessage(chatId, getAccount());
-        SendPhoto sendPhoto = SendMessages.sendEventMessage(chatId, getAccount(),
+        deleteEventMessage(getChatId(), getAccount());
+        SendPhoto sendPhoto = SendMessages.sendEventMessage(getChatId(), getAccount(),
                 "/liked_events_account&index=" + index);
         try {
             getAccount().getActivity().setLatestMessageId(execute(sendPhoto).getMessageId());
@@ -69,7 +78,7 @@ public class EventBotQueryHandlingService extends EventBotService {
 
     public void showEvents() {
         //            deleteEventMessage(chatId, account);
-        SendPhoto sendPhoto = SendMessages.sendEventMessage(chatId, getAccount(),
+        SendPhoto sendPhoto = SendMessages.sendEventMessage(getChatId(), getAccount(),
                 "/events_account&index=" + index);
         try {
             getAccount().getActivity().setLatestMessageId(execute(sendPhoto).getMessageId());
@@ -86,8 +95,8 @@ public class EventBotQueryHandlingService extends EventBotService {
         //remove like message to account
         getAccount().getUser().getEventService().removeFavoriteEvent(idEvent);
         if (getAccount().getUser().getEventService().getFavoriteEvent().size() == 0 && callbackData.contains("&account")) {
-            deleteEventMessage(chatId, getAccount());
-            SendMessage emptyListMessage = new SendMessage(chatId, "Your liked list is empty");
+            deleteEventMessage(getChatId(), getAccount());
+            SendMessage emptyListMessage = new SendMessage(getChatId(), "Your liked list is empty");
             emptyListMessage.setReplyMarkup(SendMessages.one_row_markup(
                     List.of(new String[]{"Continue watching events"}),
                     List.of(new String[]{"/events_account&index=" + index})));
@@ -106,7 +115,7 @@ public class EventBotQueryHandlingService extends EventBotService {
         }
 
         EditMessageReplyMarkup editMessageToUnlike = new EditMessageReplyMarkup(
-                chatId,
+                getChatId(),
                 getAccount().getActivity().getLatestMessageId(),
                 update.getCallbackQuery().getInlineMessageId(),
                 SendMessages.eventScrolling(

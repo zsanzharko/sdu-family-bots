@@ -1,4 +1,4 @@
-package kz.sdu.bot.entity;
+package kz.sdu.entity;
 
 import lombok.Data;
 

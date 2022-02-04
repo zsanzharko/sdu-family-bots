@@ -1,11 +1,14 @@
-package kz.sdu.bot.entity.person;
+package kz.sdu.entity.person;
 
-import lombok.Data;
+import lombok.*;
+import org.hibernate.Hibernate;
 import org.telegram.telegrambots.meta.api.objects.ChatLocation;
 
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @apiNote
@@ -20,18 +23,32 @@ import java.util.List;
  * @author Sanzhar Zhanibekov
  */
 
-@Data
+@Getter
+@Setter
+@ToString
+@Entity
+@Table(name = "telegram_accounts")
 public class Account {
     private static List<Account> accountList = new ArrayList<>();
 
-    private final User user;        // user with all communication
-    private final String chatId;    // chat ID bot to account
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Long id;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    @ToString.Exclude
+    private User user;        // user with all communication
+    private String chatId;    // chat ID bot to account
 
     @NotNull
-    private final Long ID;          // unify telegram id account
+    private Long ID;          // unify telegram id account
     private String username;        // telegram username
 
+    @Transient
     private ChatLocation chatLocation;                          // when account was the latest
+    @Transient
     private AccountActivity activity = new AccountActivity();   // latest account activity with messages
 
     public Account(Long ID, String chatId, String username, String name, String surname) {
@@ -56,15 +73,8 @@ public class Account {
         this.user = new User(name, surname);
     }
 
-    // This constructor will use when we wil add database
-    public Account(Long ID, String username, ChatLocation chatLocation, String chatId,
-                   AccountActivity activity, String name, String surname) {
-        this.ID = ID;
-        this.username = username;
-        this.user = new User(name, surname);
-        this.chatLocation = chatLocation;
-        this.chatId = chatId;
-        this.activity = activity;
+    public Account() {
+
     }
 
     public String getInformationAccount() {
@@ -94,5 +104,18 @@ public class Account {
             }
         }
         return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Account account = (Account) o;
+        return id != null && Objects.equals(id, account.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

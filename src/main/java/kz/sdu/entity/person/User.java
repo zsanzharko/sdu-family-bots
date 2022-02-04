@@ -1,18 +1,35 @@
-package kz.sdu.bot.entity.person;
+package kz.sdu.entity.person;
 
 import kz.sdu.bot.eventsBot.service.EventService;
-import lombok.Data;
+import lombok.*;
+import org.hibernate.Hibernate;
 
+import javax.persistence.*;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Data
+@Getter
+@Setter
+@ToString
+@Entity
+@Table(name = "users")
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Long id;
 
-    private String name;        // user name
+    @Column(name = "name")
+    private String name; // user name
+
+    @Column(name = "surname")
     private String surname;     // user surname
+
+    @Column(name = "student_id")
     private String studentID;   // student id
 
+    @Transient
     private EventService eventService = new EventService(); // service that works with events
 
     public User() {}
@@ -35,5 +52,16 @@ public class User {
         return matcher.find();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        User user = (User) o;
+        return id != null && Objects.equals(id, user.id);
+    }
 
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }
