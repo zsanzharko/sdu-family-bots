@@ -65,6 +65,16 @@ public class InlineKeyboardMarkupTemplate extends SendMessagesService {
             return this;
         }
 
+        public Builder addToRow(String text, String callback) {
+            List<InlineKeyboardButton> buttons = new ArrayList<>();
+            InlineKeyboardButton button = new InlineKeyboardButton(text);
+            button.setCallbackData(callback);
+
+            buttons.add(button);
+            templates.getButtons().add(buttons);
+            return this;
+        }
+
         public InlineKeyboardMarkupTemplate build() {
             return templates;
         }
