@@ -1,12 +1,13 @@
 package kz.sdu.bot.eventsBot.component.service;
 
 import kz.sdu.bot.service.AuthorizationTelegramService;
-import kz.sdu.bot.utils.InlineKeyboardMarkupTemplates;
+import kz.sdu.bot.utils.InlineKeyboardMarkupTemplate;
 import kz.sdu.entity.Event;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.Arrays;
@@ -97,9 +98,13 @@ public class EventBotQueryHandlingService extends EventBotService {
         if (getAccount().getUser().getEventService().getFavoriteEvent().size() == 0 && callbackData.contains("&account")) {
             deleteEventMessage(getChatId(), getAccount());
             SendMessage emptyListMessage = new SendMessage(getChatId(), "Your liked list is empty");
-            emptyListMessage.setReplyMarkup(InlineKeyboardMarkupTemplates.one_row_markup(
-                    List.of(new String[]{"Continue watching events"}),
-                    List.of(new String[]{"/events_account&index=" + index})));
+            InlineKeyboardMarkup markupTemplate = new InlineKeyboardMarkupTemplate.Builder()
+                    .addToRow(
+                            List.of(new String[]{"Continue watching events"}),
+                            List.of(new String[]{"/events_account&index=" + index}))
+                    .build()
+                    .getTemplate();
+            emptyListMessage.setReplyMarkup(markupTemplate);
             try {
                 execute(emptyListMessage);
             } catch (TelegramApiException e) {
