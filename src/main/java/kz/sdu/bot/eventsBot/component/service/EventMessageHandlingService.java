@@ -1,141 +1,151 @@
 package kz.sdu.bot.eventsBot.component.service;
 
 import kz.sdu.bot.service.SendMessagesService;
+import kz.sdu.bot.utils.InlineKeyboardMarkupTemplate;
 import kz.sdu.entity.Event;
 import kz.sdu.entity.person.Account;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public final class EventMessageHandlingService extends SendMessagesService {
 
     public static InlineKeyboardMarkup eventScrolling(Event event, Account account, String callbackData) {
-        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         InlineKeyboardMarkup scroll = new InlineKeyboardMarkup();
-        InlineKeyboardButton like = new InlineKeyboardButton();
+
+        String[] leaf_text = new String[0];
+        String[] leaf_callbacks = new String[0];
+        String like_text;
+        String like_callback;
 
         int index = Integer.parseInt(callbackData.substring(
                 callbackData.indexOf("&index=") + 7
         ));
 
         if (Event.getRecentEvents().size() > 1) {
-            InlineKeyboardButton previous = new InlineKeyboardButton();
-            InlineKeyboardButton next = new InlineKeyboardButton();
 
-            previous.setText("◀️");
-            next.setText("▶️");
+            leaf_text = new String[]{"◀️", "▶️"};
+
             //todo test this
             if (index == 0) {
-                previous.setCallbackData("/events_account&index=" + (Event.getEventList().size() - 1));
-                next.setCallbackData("/events_account&index=" + (index + 1));
+                leaf_callbacks = new String[] {
+                        "/events_account&index=" + (Event.getEventList().size() - 1),
+                "/events_account&index=" + (index + 1)
+                };
             } else if (index == Event.getRecentEvents().size() - 1) {
-                previous.setCallbackData("/events_account&index=" + (index - 1));
-                next.setCallbackData("/events_account&index=" + 0);
+                leaf_callbacks = new String[] {
+                        "/events_account&index=" + (index - 1),
+                "/events_account&index=" + 0
+                };
             } else {
-                previous.setCallbackData("/events_account&index=" + (index - 1));
-                next.setCallbackData("/events_account&index=" + (index + 1));
+                leaf_callbacks = new String[]{
+                        "/events_account&index=" + (index - 1),
+                        "/events_account&index=" + (index + 1)
+                };
             }
-
-            List<InlineKeyboardButton> row1 = new ArrayList<>();
-            row1.add(previous);
-            row1.add(next);
-            rowList.add(row1);
         }
-        like.setText("❤️Like❤️");
+        like_text = "❤️Like❤️";
         //todo test this. Or rewrite code
-        like.setCallbackData("/save_like_event&id=" + event.getID() + "&index=" +
-                (index < Event.getRecentEvents().size() - 1 ? index + 1 : 0));
+        like_callback = "/save_like_event&id=" + event.getID() + "&index=" +
+                (index < Event.getRecentEvents().size() - 1 ? index + 1 : 0);
 
-        for (int i = 0; i < account.getUser().getEventService().getFavoriteEvent().size(); i++) {
+        for (int i = 0; i < account.getUser().getEventService().getFavoriteEvent().size(); i++)
             if (Objects.equals(account.getUser().getEventService().getFavoriteEvent().get(i).getID(), event.getID())) {
-                like.setText("👎Unlike👎");
-                like.setCallbackData("/remove_like_event&id=" +
-                        account.getUser().getEventService().getFavoriteEvent().get(i).getID() + "&index=" + i);
+                like_text = "👎Unlike👎";
+                like_callback = "/remove_like_event&id=" +
+                        account.getUser().getEventService().getFavoriteEvent().get(i).getID() + "&index=" + i;
                 break;
             }
-        }
-        List<InlineKeyboardButton> row2 = new ArrayList<>();
-        row2.add(like);
-        rowList.add(row2);
 
-        List<InlineKeyboardButton> row3 = new ArrayList<>();
+        String paidButtonText;
+        String paidButtonCallback;
+
         if (event.getTicket().isPaid()) {
-            InlineKeyboardButton price = new InlineKeyboardButton();
-            price.setText("💵Buy");
-            price.setCallbackData("/buy_ticket_event");
-            row3.add(price);
+            paidButtonText = "💵Buy";
+            paidButtonCallback = "/buy_ticket_event";
         } else {
-            InlineKeyboardButton free = new InlineKeyboardButton();
-            free.setText("Register");
-            free.setCallbackData("/register_ticket_event");
-            row3.add(free);
+            paidButtonText = "Register";
+            paidButtonCallback = "/register_ticket_event";
         }
-        rowList.add(row3);
-        scroll.setKeyboard(rowList);
 
+        scroll.setKeyboard(
+                new InlineKeyboardMarkupTemplate.Builder()
+                        .addToColumn(
+                                List.of(leaf_text),
+                                List.of(leaf_callbacks))
+                        .addToRow(like_text, like_callback)
+                        .addToRow(paidButtonText, paidButtonCallback)
+                        .build().getButtons()
+        );
         return scroll;
     }
 
     public static InlineKeyboardMarkup likedEventScrolling(Event event, Account account, String command) {
         int index = Integer.parseInt(command.substring(command.indexOf("&index=") + 7));
-        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         InlineKeyboardMarkup scroll = new InlineKeyboardMarkup();
-        InlineKeyboardButton like = new InlineKeyboardButton();
+
+        String[] leaf_text = new String[0];
+        String[] leaf_callbacks = new String[0];
+        String like_text = "❤️Like❤️";
+        String like_callback;
 
         if (account.getUser().getEventService().getFavoriteEvent().size() > 1) {
-            InlineKeyboardButton previous = new InlineKeyboardButton();
-            InlineKeyboardButton next = new InlineKeyboardButton();
-            previous.setText("◀️");
-            next.setText("▶️");
+
+            leaf_text = new String[]{"◀️", "▶️"};
 
             if (index == 0) {
-                previous.setCallbackData("/liked_events_account&index=" +
-                        (account.getUser().getEventService().getFavoriteEvent().size() - 1));
-                next.setCallbackData("/liked_events_account&index=" + (index + 1));
+                leaf_callbacks = new String[] {
+                        "/liked_events_account&index=" +
+                                (account.getUser().getEventService().getFavoriteEvent().size() - 1),
+                        "/liked_events_account&index=" + (index + 1)};
             } else if (index == account.getUser().getEventService().getFavoriteEvent().size() - 1) {
-                previous.setCallbackData("/liked_events_account&index=" + (index - 1));
-                next.setCallbackData("/liked_events_account&index=" + 0);
+                leaf_callbacks = new String[]{
+                        "/liked_events_account&index=" + (index - 1),
+                        "/liked_events_account&index=" + 0
+                };
             } else {
-                previous.setCallbackData("/liked_events_account&index=" + (index - 1));
-                next.setCallbackData("/liked_events_account&index=" + (index + 1));
+                leaf_callbacks = new String[]{
+                        "/liked_events_account&index=" + (index - 1),
+                        "/liked_events_account&index=" + (index + 1)
+                };
             }
-
-            List<InlineKeyboardButton> row1 = new ArrayList<>();
-            row1.add(previous);
-            row1.add(next);
-            rowList.add(row1);
         }
+
+        like_callback = "/save_like_event&id=" + event.getID() + "&index=" +
+                (index < Event.getRecentEvents().size() - 1 ? index + 1 : 0);
 
         for (int i = 0; i < account.getUser().getEventService().getFavoriteEvent().size(); i++) {
             if (Objects.equals(account.getUser().getEventService().getFavoriteEvent().get(i).getID(), event.getID())) {
-                like.setText("👎Unlike👎");
-                like.setCallbackData("/remove_like_event&account&id=" + account.getUser().getEventService().getFavoriteEvent().get(i).getID());
-                List<InlineKeyboardButton> row2 = new ArrayList<>();
-                row2.add(like);
-                rowList.add(row2);
+                like_text = "👎Unlike👎";
+                like_callback = "/remove_like_event&account&id=" + account.getUser().
+                        getEventService().getFavoriteEvent().get(i).getID();
                 break;
             }
         }
 
-        List<InlineKeyboardButton> row3 = new ArrayList<>();
+        String paidButtonText;
+        String paidButtonCallback;
+
         if (event.getTicket().isPaid()) {
-            InlineKeyboardButton price = new InlineKeyboardButton();
-            price.setText("💵Buy");
-            price.setCallbackData("/buy_ticket_event");
-            row3.add(price);
+            paidButtonText = "💵Buy";
+            paidButtonCallback = "/buy_ticket_event";
         } else {
-            InlineKeyboardButton free = new InlineKeyboardButton();
-            free.setText("Register");
-            free.setCallbackData("/register_ticket_event");
-            row3.add(free);
+            paidButtonText = "Register";
+            paidButtonCallback = "/register_ticket_event";
         }
-        rowList.add(row3);
-        scroll.setKeyboard(rowList);
+
+        scroll.setKeyboard(
+                new InlineKeyboardMarkupTemplate.Builder()
+                        .addToColumn(
+                                List.of(leaf_text),
+                                List.of(leaf_callbacks))
+                        .addToRow(like_text, like_callback)
+                        .addToRow(paidButtonText, paidButtonCallback)
+                        .build().getButtons()
+        );
         return scroll;
     }
 

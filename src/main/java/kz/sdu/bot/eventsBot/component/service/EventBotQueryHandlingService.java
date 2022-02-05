@@ -1,6 +1,7 @@
 package kz.sdu.bot.eventsBot.component.service;
 
 import kz.sdu.bot.service.AuthorizationTelegramService;
+import kz.sdu.bot.service.SendMessagesService;
 import kz.sdu.bot.utils.InlineKeyboardMarkupTemplate;
 import kz.sdu.entity.Event;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -43,11 +44,11 @@ public class EventBotQueryHandlingService extends EventBotService {
     }
 
     public void editAccount() {
-        SendMessage message = EventMessageHandlingService.sendEditMessage(callbackData, getChatId());
+        SendMessage message = SendMessagesService.sendEditMessage(callbackData, getChatId());
         try {
             // check if it is account setting, or we can do edit this account
             if (callbackData.length() == 13) {
-                execute(EventMessageHandlingService.getEditAccountTools(getChatId(), getAccount()));
+                execute(SendMessagesService.getEditAccountTools(getChatId(), getAccount()));
             } else {
                 execute(message);
                 getAccount().getActivity().setLatestMessage(message);

@@ -1,7 +1,6 @@
 package kz.sdu.bot.service;
 
 import kz.sdu.entity.person.Account;
-import org.telegram.telegrambots.meta.api.objects.ChatLocation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,14 +22,6 @@ public class AuthorizationTelegramService {
             return Account.getAccountList().get(index);
         addAccount(new Account(ID, chatId));
         return Account.getAccountList().get(Account.getAccountList().size() - 1);
-    }
-
-    public static void authLogPerson(Long ID, String chatId, String username,
-                                     ChatLocation chatLocation, String name, String surname) {
-        int index = binary_search(Account.getAccountList(), ID);
-        if (index != -1)
-            return;
-        Account.getAccountList().add(new Account(ID, chatId, username, chatLocation, name, surname));
     }
 
     /**

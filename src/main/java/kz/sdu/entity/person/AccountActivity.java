@@ -17,13 +17,15 @@ public class AccountActivity {
 
     public AccountActivity() {}
 
-    public AccountActivity(SendMessage latestMessage,
-                           SendPhoto latestPhoto, SendDocument latestDocument,
-                           SendAnimation latestAnimation, SendAudio latestAudio) {
-        this.latestMessage = latestMessage;
-        this.latestPhoto = latestPhoto;
-        this.latestDocument = latestDocument;
-        this.latestAnimation = latestAnimation;
-        this.latestAudio = latestAudio;
-    }
+// --Commented out by Inspection START (2/5/2022 7:18 PM):
+//    public AccountActivity(SendMessage latestMessage,
+//                           SendPhoto latestPhoto, SendDocument latestDocument,
+//                           SendAnimation latestAnimation, SendAudio latestAudio) {
+//        this.latestMessage = latestMessage;
+//        this.latestPhoto = latestPhoto;
+//        this.latestDocument = latestDocument;
+//        this.latestAnimation = latestAnimation;
+//        this.latestAudio = latestAudio;
+//    }
+// --Commented out by Inspection STOP (2/5/2022 7:18 PM)
 }
