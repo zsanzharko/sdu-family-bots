@@ -1,9 +1,10 @@
-package kz.sdu.bot.eventsBot.service;
+package kz.sdu.bot.eventsBot.component.service;
 
 import kz.sdu.bot.service.AuthorizationTelegramService;
-import kz.sdu.bot.utils.SendMessages;
+import kz.sdu.bot.service.SendMessagesService;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -21,7 +22,7 @@ public final class EventBotMessageHandlingService extends EventBotService{
     }
 
     public void showEvents() {
-        SendPhoto sendPhoto = SendMessages.sendEventMessage(getChatId(), getAccount(),
+        SendPhoto sendPhoto = EventMessageHandlingService.sendEventMessage(getChatId(), getAccount(),
                 "/events_account&index=" + 0); //Create message with photo. Starting index - 0
         try {
             getAccount().getActivity().setLatestMessageId(
@@ -39,7 +40,7 @@ public final class EventBotMessageHandlingService extends EventBotService{
     public void showAccount() {
         try {
             getAccount().getActivity().setLatestMessageId(
-                    execute(SendMessages.getAccountMessageInformation(getChatId(), getAccount())).getMessageId()
+                    execute(SendMessagesService.getAccountMessageInformation(getChatId(), getAccount())).getMessageId()
             ); //first will execute message with account information
             // second will set current id to LatestMessageId
             logger.info("Accepted executing account\n{}", getAccount());
@@ -65,7 +66,7 @@ public final class EventBotMessageHandlingService extends EventBotService{
                 //if user will wrong give answer, we send a message with text
                 //At this moment we don't set to The Latest Message, cause all edit, will function
                 //not buttons
-                execute(SendMessages.sendMessage(getChatId(), "Please try again"));
+                execute(new SendMessage(getChatId(), "Please try again"));
             } catch (TelegramApiException e) {
                 e.printStackTrace();
             }
@@ -73,7 +74,7 @@ public final class EventBotMessageHandlingService extends EventBotService{
 
         //when user give answer bot otherwise send message that will show the account
         try {
-            execute(SendMessages.getAccountMessageInformation(getChatId(), getAccount()));
+            execute(SendMessagesService.getAccountMessageInformation(getChatId(), getAccount()));
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }

@@ -1,4 +1,4 @@
-package kz.sdu.bot.eventsBot.service;
+package kz.sdu.bot.eventsBot.component.service;
 
 import kz.sdu.entity.person.Account;
 import kz.sdu.bot.eventsBot.component.EventsBotApp;

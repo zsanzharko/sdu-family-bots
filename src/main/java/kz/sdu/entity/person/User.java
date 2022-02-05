@@ -1,6 +1,6 @@
 package kz.sdu.entity.person;
 
-import kz.sdu.bot.eventsBot.service.EventService;
+import kz.sdu.bot.eventsBot.component.service.EventService;
 import lombok.*;
 import org.hibernate.Hibernate;
 

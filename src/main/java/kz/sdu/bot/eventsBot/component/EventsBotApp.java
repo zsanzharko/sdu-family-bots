@@ -1,8 +1,8 @@
 package kz.sdu.bot.eventsBot.component;
 
-import kz.sdu.bot.eventsBot.service.EventBotMessageHandlingService;
-import kz.sdu.bot.eventsBot.service.EventBotQueryHandlingService;
-import kz.sdu.bot.eventsBot.service.EventBotService;
+import kz.sdu.bot.eventsBot.component.service.EventBotMessageHandlingService;
+import kz.sdu.bot.eventsBot.component.service.EventBotQueryHandlingService;
+import kz.sdu.bot.eventsBot.component.service.EventBotService;
 import kz.sdu.entity.Event;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
