@@ -4,6 +4,7 @@ import kz.sdu.bot.service.SendMessagesService;
 import kz.sdu.bot.utils.InlineKeyboardMarkupTemplate;
 import kz.sdu.entity.Event;
 import kz.sdu.entity.person.Account;
+import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -13,7 +14,7 @@ import java.util.Objects;
 
 public final class EventMessageHandlingService extends SendMessagesService {
 
-    public static InlineKeyboardMarkup eventScrolling(Event event, Account account, String callbackData) {
+    public static InlineKeyboardMarkup postViewMarkup(Event event, Account account, String callbackData) {
         InlineKeyboardMarkup scroll = new InlineKeyboardMarkup();
 
         String[] leaf_text = new String[0];
@@ -83,7 +84,7 @@ public final class EventMessageHandlingService extends SendMessagesService {
         return scroll;
     }
 
-    public static InlineKeyboardMarkup likedEventScrolling(Event event, Account account, String command) {
+    public static InlineKeyboardMarkup favoritePostViewMarkup(Event event, Account account, String command) {
         int index = Integer.parseInt(command.substring(command.indexOf("&index=") + 7));
         InlineKeyboardMarkup scroll = new InlineKeyboardMarkup();
 
@@ -163,11 +164,13 @@ public final class EventMessageHandlingService extends SendMessagesService {
         }
 
         if (callbackData.contains("/events")) {
-            sendPhoto.setReplyMarkup(eventScrolling(Event.getRecentEvents().get(index), account, callbackData));
+            sendPhoto.setReplyMarkup(postViewMarkup(Event.getRecentEvents().get(index), account, callbackData));
         } else if (callbackData.contains("/liked_events_account")) {
-            sendPhoto.setReplyMarkup(likedEventScrolling(
+            sendPhoto.setReplyMarkup(favoritePostViewMarkup(
                     account.getUser().getEventService().getFavoriteEvent().get(index), account, callbackData));
         }
+        LoggerFactory.getLogger(EventMessageHandlingService.class)
+                .info("Picked information");
         return sendPhoto;
     }
 }

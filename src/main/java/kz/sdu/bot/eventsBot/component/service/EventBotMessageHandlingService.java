@@ -22,9 +22,10 @@ public final class EventBotMessageHandlingService extends EventBotService{
     }
 
     public void showEvents() {
+        //fixme if event will empty, try to handling
+        try {
         SendPhoto sendPhoto = EventMessageHandlingService.sendEventMessage(getChatId(), getAccount(),
                 "/events_account&index=" + 0); //Create message with photo. Starting index - 0
-        try {
             getAccount().getActivity().setLatestMessageId(
                     execute(sendPhoto)
                             .getMessageId() // sending this message
@@ -33,6 +34,8 @@ public final class EventBotMessageHandlingService extends EventBotService{
         } catch (TelegramApiException e) {
             e.printStackTrace();
             logger.error("Failed execute the event. Check connection or message event");
+        } catch (ArrayIndexOutOfBoundsException e) {
+            e.printStackTrace();
         }
     }
 

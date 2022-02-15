@@ -68,7 +68,7 @@ public class EventBotQueryHandlingService extends EventBotService {
             }
             return;
         }
-        deleteEventMessage(getChatId(), getAccount());
+        deleteEventMessage(getChatId());
         SendPhoto sendPhoto = EventMessageHandlingService.sendEventMessage(getChatId(), getAccount(),
                 "/liked_events_account&index=" + index);
         try {
@@ -97,7 +97,7 @@ public class EventBotQueryHandlingService extends EventBotService {
         //remove like message to account
         getAccount().getUser().getEventService().removeFavoriteEvent(idEvent);
         if (getAccount().getUser().getEventService().getFavoriteEvent().size() == 0 && callbackData.contains("&account")) {
-            deleteEventMessage(getChatId(), getAccount());
+            deleteEventMessage(getChatId());
             SendMessage emptyListMessage = new SendMessage(getChatId(), "Your liked list is empty");
             InlineKeyboardMarkup markupTemplate = new InlineKeyboardMarkupTemplate.Builder()
                     .addToRow(
@@ -124,7 +124,7 @@ public class EventBotQueryHandlingService extends EventBotService {
                 getChatId(),
                 getAccount().getActivity().getLatestMessageId(),
                 update.getCallbackQuery().getInlineMessageId(),
-                EventMessageHandlingService.eventScrolling(
+                EventMessageHandlingService.postViewMarkup(
                         Event.getRecentEvents().get(
                                 Arrays.binarySearch(eventsId, idEvent)),
                         getAccount(),
