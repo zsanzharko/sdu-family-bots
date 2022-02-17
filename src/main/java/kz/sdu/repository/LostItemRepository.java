@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface LostItemRepository extends JpaRepository<LostItem, Long> {
-    List<LostItem> findAllByAccount_ID(Long ID);
+    List<LostItem> findAllBy(Long ID);
 }

@@ -20,21 +20,6 @@ import java.time.LocalTime;
 public class SduBotsFamilyApplication {
 
     public static void main(String[] args) {
-        LocalDate date = LocalDate.of(2022, 2, 13);
-        LocalTime time = LocalTime.of(6, 31);
-        Event.getEventList().add(new Event(new File("src/main/resources/images/default_blog_image.jpg"), "Elephant", "There are times when you'd prefer to do things without " +
-                "sending any messages to the chat. For example, when your user is changing settings or flipping " +
-                "through search results. In such cases you can use Inline Keyboards that are integrated directly " +
-                "into the messages they belong to.", false, 300));
-        Event.getEventList().get(0).setTimeEvent(date, time);
-        date = LocalDate.of(2022, 2, 20);
-        time = LocalTime.of(6, 31);
-        Event.getEventList().add(new Event(new File("src/main/resources/images/default_blog_image.jpg"), "Elephant", "There are times when you'd prefer to do things without " +
-                "sending any messages to the chat. For example, when your user is changing settings or flipping " +
-                "through search results. In such cases you can use Inline Keyboards that are integrated directly " +
-                "into the messages they belong to.", false, 100));
-        Event.getEventList().get(1).setTimeEvent(date, time);
-
         SpringApplication.run(SduBotsFamilyApplication.class, args);
 
         try {

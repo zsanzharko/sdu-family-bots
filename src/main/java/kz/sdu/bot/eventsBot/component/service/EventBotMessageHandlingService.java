@@ -15,7 +15,7 @@ public final class EventBotMessageHandlingService extends EventBotService{
 
     public EventBotMessageHandlingService(Update update) {
         super(update.getMessage().getChat().getId(), update.getMessage().getChatId().toString(),
-                AuthorizationTelegramService.authLogPerson(
+                new AuthorizationTelegramService.authLogUser(
                         update.getMessage().getChat().getId(),
                         update.getMessage().getChatId().toString()));
 
@@ -24,9 +24,9 @@ public final class EventBotMessageHandlingService extends EventBotService{
     public void showEvents() {
         //fixme if event will empty, try to handling
         try {
-        SendPhoto sendPhoto = EventMessageHandlingService.sendEventMessage(getChatId(), getAccount(),
+        SendPhoto sendPhoto = EventMessageHandlingService.sendEventMessage(getChatId(), this.getTelegramAccount(),
                 "/events_account&index=" + 0); //Create message with photo. Starting index - 0
-            getAccount().getActivity().setLatestMessageId(
+            this.getTelegramAccount().getActivity().setLatestMessageId(
                     execute(sendPhoto)
                             .getMessageId() // sending this message
             );
@@ -42,11 +42,11 @@ public final class EventBotMessageHandlingService extends EventBotService{
 
     public void showAccount() {
         try {
-            getAccount().getActivity().setLatestMessageId(
-                    execute(SendMessagesService.getAccountMessageInformation(getChatId(), getAccount())).getMessageId()
+            this.getTelegramAccount().getActivity().setLatestMessageId(
+                    execute(SendMessagesService.getAccountMessageInformation(getChatId(), this.getTelegramAccount())).getMessageId()
             ); //first will execute message with account information
             // second will set current id to LatestMessageId
-            logger.info("Accepted executing account\n{}", getAccount());
+            logger.info("Accepted executing account\n{}", this.getTelegramAccount());
         } catch (TelegramApiException e) {
             e.printStackTrace();
             logger.error("The account could not be displayed because it was not found in" +
@@ -56,7 +56,7 @@ public final class EventBotMessageHandlingService extends EventBotService{
 
     public void defaultAction(Update update) { // default commands to edit account. Latest saved message will contain with text
         String command = "null";
-        String text = getAccount().getActivity().getLatestMessage().getText();
+        String text = this.getTelegramAccount().getActivity().getLatestMessage().getText();
         if (text.contains("surname")) {
             command = "/edit_account_surname";
         } else if (text.contains("name")) {
@@ -64,7 +64,7 @@ public final class EventBotMessageHandlingService extends EventBotService{
         } else if (text.contains("student ID")) {
             command = "/edit_account_student_id";
         }
-        if (!getAccount().setInfoEdit(command, update.getMessage().getText())) {
+        if (!this.getTelegramAccount().setInfoEdit(command, update.getMessage().getText())) {
             try {
                 //if user will wrong give answer, we send a message with text
                 //At this moment we don't set to The Latest Message, cause all edit, will function
@@ -77,7 +77,7 @@ public final class EventBotMessageHandlingService extends EventBotService{
 
         //when user give answer bot otherwise send message that will show the account
         try {
-            execute(SendMessagesService.getAccountMessageInformation(getChatId(), getAccount()));
+            execute(SendMessagesService.getAccountMessageInformation(getChatId(), this.getTelegramAccount()));
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }

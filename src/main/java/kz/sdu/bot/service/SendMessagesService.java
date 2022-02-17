@@ -1,7 +1,7 @@
 package kz.sdu.bot.service;
 
+import kz.sdu.entity.TelegramAccount;
 import kz.sdu.bot.utils.InlineKeyboardMarkupTemplate;
-import kz.sdu.entity.person.Account;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
@@ -21,8 +21,8 @@ public class SendMessagesService {
         return new SendMessage(chatId,text);
     }
 
-    public static SendMessage getAccountMessageInformation(String chatId, Account account) {
-        SendMessage message = new SendMessage(chatId, account.getInformationAccount());
+    public static SendMessage getAccountMessageInformation(String chatId, TelegramAccount telegramAccount) {
+        SendMessage message = new SendMessage(chatId, telegramAccount.getInformationAccount());
 
         final String[] texts = {"Edit", "Tickets", "❤️Events"};
         final String[] callbacks = {"/edit_account", "/tickets_account", "/liked_events_account&index=" + 0};
@@ -35,13 +35,13 @@ public class SendMessagesService {
 
         message.setReplyMarkup(markup);
 
-        account.getActivity().setLatestMessage(message);
+        telegramAccount.getActivity().setLatestMessage(message);
 
         return message;
     }
 
-    public static SendMessage getEditAccountTools(String chatId, Account account) {
-        SendMessage message = new SendMessage(chatId, account.getInformationAccount());
+    public static SendMessage getEditAccountTools(String chatId, TelegramAccount telegramAccount) {
+        SendMessage message = new SendMessage(chatId, telegramAccount.getInformationAccount());
 
         final String[] column_one_texts = {"Name", "Surname"};
         final String[] column_one_callbacks = {"/edit_account_name", "/edit_account_surname"};
@@ -59,7 +59,7 @@ public class SendMessagesService {
 
         message.setReplyMarkup(inlineKeyboardMarkup);
 
-        account.getActivity().setLatestMessage(message);
+        telegramAccount.getActivity().setLatestMessage(message);
 
         return message;
     }

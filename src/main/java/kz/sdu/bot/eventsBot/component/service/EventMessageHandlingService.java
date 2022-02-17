@@ -1,9 +1,9 @@
 package kz.sdu.bot.eventsBot.component.service;
 
+import kz.sdu.entity.TelegramAccount;
 import kz.sdu.bot.service.SendMessagesService;
 import kz.sdu.bot.utils.InlineKeyboardMarkupTemplate;
 import kz.sdu.entity.Event;
-import kz.sdu.entity.person.Account;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
@@ -14,7 +14,7 @@ import java.util.Objects;
 
 public final class EventMessageHandlingService extends SendMessagesService {
 
-    public static InlineKeyboardMarkup postViewMarkup(Event event, Account account, String callbackData) {
+    public static InlineKeyboardMarkup postViewMarkup(Event event, TelegramAccount telegramAccount, String callbackData) {
         InlineKeyboardMarkup scroll = new InlineKeyboardMarkup();
 
         String[] leaf_text = new String[0];
@@ -53,11 +53,11 @@ public final class EventMessageHandlingService extends SendMessagesService {
         like_callback = "/save_like_event&id=" + event.getID() + "&index=" +
                 (index < Event.getRecentEvents().size() - 1 ? index + 1 : 0);
 
-        for (int i = 0; i < account.getUser().getEventService().getFavoriteEvent().size(); i++)
-            if (Objects.equals(account.getUser().getEventService().getFavoriteEvent().get(i).getID(), event.getID())) {
+        for (int i = 0; i < telegramAccount.getUser().getEventService().getFavoriteEvent().size(); i++)
+            if (Objects.equals(telegramAccount.getUser().getEventService().getFavoriteEvent().get(i).getID(), event.getID())) {
                 like_text = "👎Unlike👎";
                 like_callback = "/remove_like_event&id=" +
-                        account.getUser().getEventService().getFavoriteEvent().get(i).getID() + "&index=" + i;
+                        telegramAccount.getUser().getEventService().getFavoriteEvent().get(i).getID() + "&index=" + i;
                 break;
             }
 
@@ -84,7 +84,7 @@ public final class EventMessageHandlingService extends SendMessagesService {
         return scroll;
     }
 
-    public static InlineKeyboardMarkup favoritePostViewMarkup(Event event, Account account, String command) {
+    public static InlineKeyboardMarkup favoritePostViewMarkup(Event event, TelegramAccount telegramAccount, String command) {
         int index = Integer.parseInt(command.substring(command.indexOf("&index=") + 7));
         InlineKeyboardMarkup scroll = new InlineKeyboardMarkup();
 
@@ -93,16 +93,16 @@ public final class EventMessageHandlingService extends SendMessagesService {
         String like_text = "❤️Like❤️";
         String like_callback;
 
-        if (account.getUser().getEventService().getFavoriteEvent().size() > 1) {
+        if (telegramAccount.getUser().getEventService().getFavoriteEvent().size() > 1) {
 
             leaf_text = new String[]{"◀️", "▶️"};
 
             if (index == 0) {
                 leaf_callbacks = new String[] {
                         "/liked_events_account&index=" +
-                                (account.getUser().getEventService().getFavoriteEvent().size() - 1),
+                                (telegramAccount.getUser().getEventService().getFavoriteEvent().size() - 1),
                         "/liked_events_account&index=" + (index + 1)};
-            } else if (index == account.getUser().getEventService().getFavoriteEvent().size() - 1) {
+            } else if (index == telegramAccount.getUser().getEventService().getFavoriteEvent().size() - 1) {
                 leaf_callbacks = new String[]{
                         "/liked_events_account&index=" + (index - 1),
                         "/liked_events_account&index=" + 0
@@ -118,10 +118,10 @@ public final class EventMessageHandlingService extends SendMessagesService {
         like_callback = "/save_like_event&id=" + event.getID() + "&index=" +
                 (index < Event.getRecentEvents().size() - 1 ? index + 1 : 0);
 
-        for (int i = 0; i < account.getUser().getEventService().getFavoriteEvent().size(); i++) {
-            if (Objects.equals(account.getUser().getEventService().getFavoriteEvent().get(i).getID(), event.getID())) {
+        for (int i = 0; i < telegramAccount.getUser().getEventService().getFavoriteEvent().size(); i++) {
+            if (Objects.equals(telegramAccount.getUser().getEventService().getFavoriteEvent().get(i).getID(), event.getID())) {
                 like_text = "👎Unlike👎";
-                like_callback = "/remove_like_event&account&id=" + account.getUser().
+                like_callback = "/remove_like_event&telegramAccount&id=" + telegramAccount.getUser().
                         getEventService().getFavoriteEvent().get(i).getID();
                 break;
             }
@@ -151,7 +151,7 @@ public final class EventMessageHandlingService extends SendMessagesService {
     }
 
 
-    public static SendPhoto sendEventMessage(String chatId, Account account, String callbackData) {
+    public static SendPhoto sendEventMessage(String chatId, TelegramAccount telegramAccount, String callbackData) {
         SendPhoto sendPhoto = new SendPhoto();
         sendPhoto.setChatId(chatId);
         int index = Integer.parseInt(callbackData.substring(
@@ -164,10 +164,10 @@ public final class EventMessageHandlingService extends SendMessagesService {
         }
 
         if (callbackData.contains("/events")) {
-            sendPhoto.setReplyMarkup(postViewMarkup(Event.getRecentEvents().get(index), account, callbackData));
+            sendPhoto.setReplyMarkup(postViewMarkup(Event.getRecentEvents().get(index), telegramAccount, callbackData));
         } else if (callbackData.contains("/liked_events_account")) {
             sendPhoto.setReplyMarkup(favoritePostViewMarkup(
-                    account.getUser().getEventService().getFavoriteEvent().get(index), account, callbackData));
+                    telegramAccount.getUser().getEventService().getFavoriteEvent().get(index), telegramAccount, callbackData));
         }
         LoggerFactory.getLogger(EventMessageHandlingService.class)
                 .info("Picked information");

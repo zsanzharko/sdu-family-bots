@@ -1,6 +1,6 @@
 package kz.sdu.bot.eventsBot.component.service;
 
-import kz.sdu.entity.person.Account;
+import kz.sdu.entity.TelegramAccount;
 import kz.sdu.bot.eventsBot.component.EventsBotApp;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,7 +21,7 @@ public class EventBotService extends EventsBotApp {
     private String name;
     private String surname;
 
-    private Account account;
+    private TelegramAccount telegramAccount;
 
     private EventBotMessageHandlingService messageService;
     private EventBotQueryHandlingService queryHandlingService;
@@ -31,38 +31,38 @@ public class EventBotService extends EventsBotApp {
     public EventBotService() {
     }
 
-    public EventBotService(Long id, String chatId, String username, String name, String surname, Account account) {
+    public EventBotService(Long id, String chatId, String username, String name, String surname, TelegramAccount telegramAccount) {
         this.id = id;
         this.chatId = chatId;
         this.username = username;
         this.name = name;
         this.surname = surname;
-        this.account = account;
+        this.telegramAccount = telegramAccount;
     }
 
-    public EventBotService(Long id, String chatId, Account account) {
+    public EventBotService(Long id, String chatId, TelegramAccount telegramAccount) {
         this.id = id;
         this.chatId = chatId;
-        this.account = account;
+        this.telegramAccount = telegramAccount;
     }
 
     public void deleteEventMessage(String chatId) throws TelegramApiException {
         DeleteMessage deleteMessage = new DeleteMessage();
         deleteMessage.setChatId(chatId);
-        deleteMessage.setMessageId(account.getActivity().getLatestMessageId());
+        deleteMessage.setMessageId(telegramAccount.getActivity().getLatestMessageId());
 
         try {
             execute(deleteMessage);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         } finally {
-            account.getActivity().setLatestMessageId(null);
-            logger.warn("Latest message has been deleted, in account {}", account.getId());
+            telegramAccount.getActivity().setLatestMessageId(null);
+            logger.warn("Latest message has been deleted, in telegramAccount {}", telegramAccount.getId());
         }
     }
 
     public void editMessage(String chatId, String text, InlineKeyboardMarkup markup) {
-        Integer messageId = account.getActivity().getLatestMessageId();
+        Integer messageId = telegramAccount.getActivity().getLatestMessageId();
 
         assert markup != null;
         EditMessageReplyMarkup editMessageReplyMarkup = new EditMessageReplyMarkup();

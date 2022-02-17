@@ -1,7 +1,6 @@
 package kz.sdu.entity;
 
-import kz.sdu.impl.LostedItem;
-import kz.sdu.entity.person.Account;
+import kz.sdu.repository.LostedItem;
 import lombok.Getter;
 import lombok.Setter;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
@@ -19,13 +18,8 @@ import java.util.List;
         @AttributeOverride(name="description", column = @Column(name = "description"))
 })
 public class LostItem extends Item implements LostedItem {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
-
     @Transient
-    private Account account;
+    private User user;
 
     @Transient
     private List<InputFile> photos;
@@ -33,9 +27,9 @@ public class LostItem extends Item implements LostedItem {
     @Column(name = "is_lost")
     private Boolean isLost = true;
 
-    public LostItem(Account account, List<InputFile> photos, String name, String description) {
+    public LostItem(User user, List<InputFile> photos, String name, String description) {
         super(name, description);
-        this.account = account;
+        this.user = user;
         this.isLost = true;
 
         if (photos.isEmpty())
@@ -43,9 +37,9 @@ public class LostItem extends Item implements LostedItem {
         else this.photos = photos;
     }
 
-    public LostItem(Account account, InputFile photo, String name, String description) {
+    public LostItem(User user, InputFile photo, String name, String description) {
         super(name, description);
-        this.account = account;
+        this.user = user;
         this.isLost = true;
 
         if (photos == null)
@@ -60,17 +54,17 @@ public class LostItem extends Item implements LostedItem {
     }
 
     @Override
-    public void foundItemUser(Account account) {
+    public void foundItemUser(TelegramAccount telegramAccount) {
 
     }
 
     @Override
     public String getDetails() {
-        return "Telegram account id: " + account.getId() + "\n" +
-                "Telegram username: " + account.getUsername() + "\n" +
+        return "Telegram telegramAccountModel id: " + user.getTelegramAccount().getId() + "\n" +
+                "Telegram username: " + user.getTelegramAccount().getUsername() + "\n" +
                 "Losing item name: " + getName() + "\n" +
-                "Losing item description" + getDescription() + "\n";
-//                "Founded losing user phone number: " + account.getUser().getPhoneNumber();
+                "Losing item description" + getDescription() + "\n" +
+                "Founded losing user phone number: " + user.getPhoneNumber();
 
     }
 }

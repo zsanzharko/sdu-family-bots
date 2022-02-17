@@ -4,6 +4,7 @@ import kz.sdu.bot.service.AuthorizationTelegramService;
 import kz.sdu.bot.service.SendMessagesService;
 import kz.sdu.bot.utils.InlineKeyboardMarkupTemplate;
 import kz.sdu.entity.Event;
+import kz.sdu.service.EventService;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
@@ -28,7 +29,7 @@ public class EventBotQueryHandlingService extends EventBotService {
                         "null",
                 update.getMessage().getChat().getFirstName(),
                 update.getMessage().getChat().getLastName(),
-                AuthorizationTelegramService.authLogPerson(
+                AuthorizationTelegramService.authLogUser(
                         update.getMessage().getChat().getId(),
                         update.getMessage().getChatId().toString(),
                         update.getMessage().getChat().getUserName() != null ?
@@ -48,10 +49,10 @@ public class EventBotQueryHandlingService extends EventBotService {
         try {
             // check if it is account setting, or we can do edit this account
             if (callbackData.length() == 13) {
-                execute(SendMessagesService.getEditAccountTools(getChatId(), getAccount()));
+                execute(SendMessagesService.getEditAccountTools(getChatId(), this.getTelegramAccount()));
             } else {
                 execute(message);
-                getAccount().getActivity().setLatestMessage(message);
+                this.getTelegramAccount().getActivity().setLatestMessage(message);
             }
         } catch (TelegramApiException e) {
             e.printStackTrace();
@@ -59,7 +60,7 @@ public class EventBotQueryHandlingService extends EventBotService {
     }
 
     public void showFavoriteEvents() {
-        List<Event> likedEvents = getAccount().getUser().getEventService().getFavoriteEvent();
+        List<Event> likedEvents = this.getTelegramAccount().getUser().getEventService().getFavoriteEvent();
         if (likedEvents.size() == 0) {
             try {
                 execute(new SendMessage(getChatId(), "Your liked events is empty"));
@@ -73,10 +74,10 @@ public class EventBotQueryHandlingService extends EventBotService {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
-        SendPhoto sendPhoto = EventMessageHandlingService.sendEventMessage(getChatId(), getAccount(),
+        SendPhoto sendPhoto = EventMessageHandlingService.sendEventMessage(getChatId(), this.getTelegramAccount(),
                 "/liked_events_account&index=" + index);
         try {
-            getAccount().getActivity().setLatestMessageId(execute(sendPhoto).getMessageId());
+            this.getTelegramAccount().getActivity().setLatestMessageId(execute(sendPhoto).getMessageId());
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
@@ -84,21 +85,21 @@ public class EventBotQueryHandlingService extends EventBotService {
 
     public void showEvents() {
         //            deleteEventMessage(chatId, account);
-        SendPhoto sendPhoto = EventMessageHandlingService.sendEventMessage(getChatId(), getAccount(),
+        SendPhoto sendPhoto = EventMessageHandlingService.sendEventMessage(getChatId(), this.getTelegramAccount(),
                 "/events_account&index=" + index);
         try {
-            getAccount().getActivity().setLatestMessageId(execute(sendPhoto).getMessageId());
+            this.getTelegramAccount().getActivity().setLatestMessageId(execute(sendPhoto).getMessageId());
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
     }
 
     public void saveEvent(Long idEvent) {
-        getAccount().getUser().getEventService().addFavoriteEvent(idEvent);
+        this.getTelegramAccount().getUser().getEventService().addFavoriteEvent(idEvent);
     }
 
     public void removeEvent(Long idEvent) {
-        EventService service = getAccount().getUser().getEventService();
+        EventService service = this.getTelegramAccount().getUser().getEventService();
         //remove like message to account
         service.removeFavoriteEvent(idEvent);
         if (service.getFavoriteEvent().size() == 0 && callbackData.contains("&account")) {
@@ -137,12 +138,12 @@ public class EventBotQueryHandlingService extends EventBotService {
 
         EditMessageReplyMarkup editMessageToUnlike = new EditMessageReplyMarkup(
                 getChatId(),
-                getAccount().getActivity().getLatestMessageId(),
+                this.getTelegramAccount().getActivity().getLatestMessageId(),
                 update.getCallbackQuery().getInlineMessageId(),
                 EventMessageHandlingService.postViewMarkup(
                         Event.getRecentEvents().get(
                                 Arrays.binarySearch(eventsId, idEvent)),
-                        getAccount(),
+                        this.getTelegramAccount(),
                         callbackData));
 
         try {

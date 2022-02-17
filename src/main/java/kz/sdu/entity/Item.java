@@ -9,7 +9,7 @@ import javax.persistence.MappedSuperclass;
 @Getter
 @Setter
 @MappedSuperclass
-public abstract class Item {
+public abstract class Item extends AbstractBaseEntity {
     @Column(name = "name")
     private String name;
     @Column(name = "description")

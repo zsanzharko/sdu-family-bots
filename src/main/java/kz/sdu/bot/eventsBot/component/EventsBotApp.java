@@ -2,13 +2,12 @@ package kz.sdu.bot.eventsBot.component;
 
 import kz.sdu.bot.eventsBot.component.service.EventBotMessageHandlingService;
 import kz.sdu.bot.eventsBot.component.service.EventBotQueryHandlingService;
-import kz.sdu.bot.eventsBot.component.service.EventBotService;
-import kz.sdu.entity.Event;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+//fixme Add updating event with time zone
 
 @Slf4j
 @Component
@@ -31,7 +30,6 @@ public class EventsBotApp extends TelegramLongPollingBot {
             EventBotMessageHandlingService eventBotService = new EventBotMessageHandlingService(update);
             if (update.getMessage().hasText()) {
                 //todo: create new class with thread
-                Event.updateRecentEventList(); //update events with time zone;
                 switch (update.getMessage().getText().trim()) { //checking message on the default command
                     case "/events" -> eventBotService.showEvents();
                     case "/account" -> eventBotService.showAccount();

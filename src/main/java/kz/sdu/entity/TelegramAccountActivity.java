@@ -1,11 +1,11 @@
-package kz.sdu.entity.person;
+package kz.sdu.entity;
 
 import lombok.Data;
 import org.telegram.telegrambots.meta.api.methods.send.*;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 
 @Data
-public class AccountActivity {
+public class TelegramAccountActivity {
     private SendMessage latestMessage;
     private SendPhoto latestPhoto;
     private SendDocument latestDocument;
@@ -15,10 +15,10 @@ public class AccountActivity {
 
     private Integer latestMessageId;
 
-    public AccountActivity() {}
+    public TelegramAccountActivity() {}
 
 // --Commented out by Inspection START (2/5/2022 7:18 PM):
-//    public AccountActivity(SendMessage latestMessage,
+//    public TelegramAccountActivity(SendMessage latestMessage,
 //                           SendPhoto latestPhoto, SendDocument latestDocument,
 //                           SendAnimation latestAnimation, SendAudio latestAudio) {
 //        this.latestMessage = latestMessage;
