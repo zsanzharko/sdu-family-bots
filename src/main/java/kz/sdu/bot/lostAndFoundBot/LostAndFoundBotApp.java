@@ -1,4 +1,4 @@
-package kz.sdu.bot.lostAndFoundBot.component;
+package kz.sdu.bot.lostAndFoundBot;
 
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -20,5 +20,17 @@ public class LostAndFoundBotApp extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
 
+        if (update.hasMessage()) {
+
+            if (update.getMessage().hasText()) {
+
+                switch (update.getMessage().getText().trim()) {
+                    case "/lost" -> {}
+                    case "/account" -> {}
+                    case "/information" -> {}
+                    default -> {}
+                }
+            }
+        }
     }
 }

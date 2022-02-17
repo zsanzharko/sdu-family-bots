@@ -4,7 +4,7 @@ import kz.sdu.bot.challengeBot.component.ChallengeBotApp;
 import kz.sdu.entity.Event;
 import kz.sdu.bot.eventsBot.component.EventsBotApp;
 import kz.sdu.bot.helpStudentBot.component.HelpStudentBotApp;
-import kz.sdu.bot.lostAndFoundBot.component.LostAndFoundBotApp;
+import kz.sdu.bot.lostAndFoundBot.LostAndFoundBotApp;
 import kz.sdu.bot.marketPlaceBot.component.MarketPlaceBotApp;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

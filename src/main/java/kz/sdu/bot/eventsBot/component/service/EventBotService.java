@@ -1,11 +1,9 @@
 package kz.sdu.bot.eventsBot.component.service;
 
-import kz.sdu.entity.Event;
 import kz.sdu.entity.person.Account;
 import kz.sdu.bot.eventsBot.component.EventsBotApp;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
@@ -48,7 +46,7 @@ public class EventBotService extends EventsBotApp {
         this.account = account;
     }
 
-    public void deleteEventMessage(String chatId) {
+    public void deleteEventMessage(String chatId) throws TelegramApiException {
         DeleteMessage deleteMessage = new DeleteMessage();
         deleteMessage.setChatId(chatId);
         deleteMessage.setMessageId(account.getActivity().getLatestMessageId());

@@ -68,7 +68,11 @@ public class EventBotQueryHandlingService extends EventBotService {
             }
             return;
         }
-        deleteEventMessage(getChatId());
+        try {
+            deleteEventMessage(getChatId());
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
         SendPhoto sendPhoto = EventMessageHandlingService.sendEventMessage(getChatId(), getAccount(),
                 "/liked_events_account&index=" + index);
         try {
@@ -94,10 +98,21 @@ public class EventBotQueryHandlingService extends EventBotService {
     }
 
     public void removeEvent(Long idEvent) {
+        EventService service = getAccount().getUser().getEventService();
         //remove like message to account
-        getAccount().getUser().getEventService().removeFavoriteEvent(idEvent);
-        if (getAccount().getUser().getEventService().getFavoriteEvent().size() == 0 && callbackData.contains("&account")) {
-            deleteEventMessage(getChatId());
+        service.removeFavoriteEvent(idEvent);
+        if (service.getFavoriteEvent().size() == 0 && callbackData.contains("&account")) {
+            try {
+                deleteEventMessage(getChatId()); // delete event in message
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+                try {
+                    execute(new SendMessage(getChatId(),
+                            "Sorry, we can't remove this message, because time is out"));
+                } catch (TelegramApiException ex) {
+                    ex.printStackTrace();
+                }
+            }
             SendMessage emptyListMessage = new SendMessage(getChatId(), "Your liked list is empty");
             InlineKeyboardMarkup markupTemplate = new InlineKeyboardMarkupTemplate.Builder()
                     .addToRow(
