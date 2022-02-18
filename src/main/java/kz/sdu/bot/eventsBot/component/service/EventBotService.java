@@ -1,11 +1,14 @@
 package kz.sdu.bot.eventsBot.component.service;
 
+import kz.sdu.bot.service.AuthorizationTelegramService;
 import kz.sdu.bot.service.SendMessagesService;
 import kz.sdu.entity.Event;
 import kz.sdu.entity.TelegramAccount;
 import kz.sdu.bot.eventsBot.component.EventsBotApp;
 import kz.sdu.entity.User;
 import kz.sdu.repository.EventRepository;
+import kz.sdu.repository.TelegramAccountRepository;
+import kz.sdu.repository.UserRepository;
 import kz.sdu.service.UserService;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -37,24 +40,22 @@ public class EventBotService extends EventsBotApp {
 
     private User user;
 
-    @Autowired private EventRepository eventRepository;
+    private final EventRepository eventRepository;
+    private final TelegramAccountRepository accountRepository;
+    private final UserRepository userRepository;
 
     final Logger logger = LoggerFactory.getLogger(EventBotService.class);
 
-    public EventBotService() {
+    public EventBotService(EventRepository eventRepository, TelegramAccountRepository accountRepository, UserRepository userRepository) {
+        this.eventRepository = eventRepository;
+        this.accountRepository = accountRepository;
+        this.userRepository = userRepository;
     }
 
-    public EventBotService(Long id, String chatId, String username, String name, String surname) {
+    public void setIds(Long id, String chatId) {
         this.id = id;
         this.chatId = chatId;
-        this.username = username;
-        this.name = name;
-        this.surname = surname;
-    }
-
-    public EventBotService(Long id, String chatId) {
-        this.id = id;
-        this.chatId = chatId;
+        this.user = new AuthorizationTelegramService(accountRepository, userRepository).authLogUser(id, chatId);
     }
 
     public void showEvents() {

@@ -1,8 +1,15 @@
 package kz.sdu.bot.eventsBot.component;
 
 import kz.sdu.bot.eventsBot.component.service.EventBotService;
+import kz.sdu.repository.EventRepository;
+import kz.sdu.repository.TelegramAccountRepository;
+import kz.sdu.repository.UserRepository;
 import kz.sdu.service.EventService;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -11,7 +18,17 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Slf4j
 @Component
+@Configurable
 public class EventsBotApp extends TelegramLongPollingBot {
+
+    final Logger logger = LoggerFactory.getLogger(EventBotService.class);
+
+    @Autowired
+    private EventRepository eventRepository;
+    @Autowired
+    private TelegramAccountRepository accountRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public String getBotUsername() {
@@ -25,7 +42,10 @@ public class EventsBotApp extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        EventBotService eventBotService = new EventBotService();
+        logger.debug("User:\n" +
+                "account id: {}", update.getMessage().getChat().getId());
+        EventBotService eventBotService = new EventBotService(eventRepository, accountRepository, userRepository);
+        eventBotService.setIds(update.getMessage().getChat().getId(), update.getMessage().getChatId().toString());
         if (update.hasMessage()) {
 
             if (update.getMessage().hasText()) {

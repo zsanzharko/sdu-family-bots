@@ -1,6 +1,7 @@
 package kz.sdu.bot.service;
 
 import kz.sdu.entity.TelegramAccount;
+import kz.sdu.entity.User;
 import kz.sdu.repository.TelegramAccountRepository;
 import kz.sdu.repository.UserRepository;
 import lombok.Getter;
@@ -14,18 +15,27 @@ import java.util.Objects;
 @Getter
 public final class AuthorizationTelegramService {
 
-    @Autowired private TelegramAccountRepository accountRepository;
-    @Autowired private UserRepository userRepository;
+    private final TelegramAccountRepository accountRepository;
+    private final UserRepository userRepository;
 
-    public TelegramAccount authLogUser(Long id, String chatId) {
-        TelegramAccount account = accountRepository.findTelegramAccountModelById(id);
+    public AuthorizationTelegramService(TelegramAccountRepository accountRepository, UserRepository userRepository) {
+        this.accountRepository = accountRepository;
+        this.userRepository = userRepository;
+    }
+
+    public User authLogUser(Long id, String chatId) {
+        User account = userRepository.findUserByTelegramAccount_Id(id);
         if (account != null)
             return addAccount(account);
-        return addAccount(new TelegramAccount(id, chatId));
+        return addAccount(new User(new TelegramAccount(id, chatId)));
     }
 
     private TelegramAccount addAccount(TelegramAccount account) {
         return accountRepository.save(account);
+    }
+
+    private User addAccount(User account) {
+        return userRepository.save(account);
     }
 
     public TelegramAccountRepository accountRepository() {

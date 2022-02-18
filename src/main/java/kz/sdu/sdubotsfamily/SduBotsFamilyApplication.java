@@ -1,7 +1,6 @@
 package kz.sdu.sdubotsfamily;
 
 import kz.sdu.bot.challengeBot.component.ChallengeBotApp;
-import kz.sdu.entity.Event;
 import kz.sdu.bot.eventsBot.component.EventsBotApp;
 import kz.sdu.bot.helpStudentBot.component.HelpStudentBotApp;
 import kz.sdu.bot.lostAndFoundBot.LostAndFoundBotApp;
@@ -12,9 +11,6 @@ import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
-import java.io.File;
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 @SpringBootApplication
 public class SduBotsFamilyApplication {
