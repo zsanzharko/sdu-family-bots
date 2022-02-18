@@ -1,39 +1,33 @@
 package kz.sdu.service;
 
 import kz.sdu.entity.Event;
-import kz.sdu.entity.User;
 import kz.sdu.repository.EventRepository;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.List;
 
 @Getter
 @Setter
 @Service
-public record EventService(
-        List<Event> events,
-        List<Event> favoriteEvent,
-        EventRepository eventRepository) {
+public final class EventService {
+    @Autowired
+    private EventRepository eventRepository;
+
+    public EventService() {
+    }
 
     public void removeEvent(Long id) {
+        //todo Check event before to delete
         eventRepository.deleteById(id);
     }
 
-    public void addEvent(Event event) {
-        events.add(event);
-    }
-
-    public void addFavoriteEvent(Long ID) {
-        Event event = Event.getRecentEvents().get(binary_search(Event.getRecentEvents(), ID));
-        favoriteEvent.add(event);
-    }
-
-    public void removeFavoriteEvent(Long id) {
-        eventRepository.deleteById(id);
+    public Event addEvent(Event event) {
+        //todo Check data before to save in db, cause in db we have some fields in req not null
+        return eventRepository.save(event);
     }
 
     /**
@@ -43,6 +37,5 @@ public record EventService(
      */
     public static void updateRecentEventList() {
         LocalDate localDateNow = LocalDate.now(ZoneId.of("Asia/Almaty"));
-
     }
 }

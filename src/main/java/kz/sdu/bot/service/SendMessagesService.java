@@ -2,6 +2,8 @@ package kz.sdu.bot.service;
 
 import kz.sdu.entity.TelegramAccount;
 import kz.sdu.bot.utils.InlineKeyboardMarkupTemplate;
+import kz.sdu.entity.User;
+import kz.sdu.service.TelegramAccountService;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
@@ -21,8 +23,8 @@ public class SendMessagesService {
         return new SendMessage(chatId,text);
     }
 
-    public static SendMessage getAccountMessageInformation(String chatId, TelegramAccount telegramAccount) {
-        SendMessage message = new SendMessage(chatId, telegramAccount.getInformationAccount());
+    public static SendMessage getAccountMessageInformation(String chatId, User user) {
+        SendMessage message = new SendMessage(chatId, new TelegramAccountService(user).getInformationAccount());
 
         final String[] texts = {"Edit", "Tickets", "❤️Events"};
         final String[] callbacks = {"/edit_account", "/tickets_account", "/liked_events_account&index=" + 0};
@@ -35,13 +37,13 @@ public class SendMessagesService {
 
         message.setReplyMarkup(markup);
 
-        telegramAccount.getActivity().setLatestMessage(message);
+        user.getTelegramAccount().getActivity().setLatestMessage(message);
 
         return message;
     }
 
-    public static SendMessage getEditAccountTools(String chatId, TelegramAccount telegramAccount) {
-        SendMessage message = new SendMessage(chatId, telegramAccount.getInformationAccount());
+    public static SendMessage getEditAccountTools(String chatId, User user) {
+        SendMessage message = new SendMessage(chatId, new TelegramAccountService(user).getInformationAccount());
 
         final String[] column_one_texts = {"Name", "Surname"};
         final String[] column_one_callbacks = {"/edit_account_name", "/edit_account_surname"};
@@ -59,7 +61,7 @@ public class SendMessagesService {
 
         message.setReplyMarkup(inlineKeyboardMarkup);
 
-        telegramAccount.getActivity().setLatestMessage(message);
+        user.getTelegramAccount().getActivity().setLatestMessage(message);
 
         return message;
     }

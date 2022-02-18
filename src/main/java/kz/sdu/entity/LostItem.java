@@ -1,6 +1,6 @@
 package kz.sdu.entity;
 
-import kz.sdu.repository.LostedItem;
+import kz.sdu.repository.ILostItem;
 import lombok.Getter;
 import lombok.Setter;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
@@ -17,7 +17,7 @@ import java.util.List;
         @AttributeOverride(name="name", column = @Column(name = "name")),
         @AttributeOverride(name="description", column = @Column(name = "description"))
 })
-public class LostItem extends Item implements LostedItem {
+public class LostItem extends Item implements ILostItem {
     @Transient
     private User user;
 

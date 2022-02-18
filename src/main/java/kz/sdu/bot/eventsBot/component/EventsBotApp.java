@@ -1,7 +1,7 @@
 package kz.sdu.bot.eventsBot.component;
 
-import kz.sdu.bot.eventsBot.component.service.EventBotMessageHandlingService;
-import kz.sdu.bot.eventsBot.component.service.EventBotQueryHandlingService;
+import kz.sdu.bot.eventsBot.component.service.EventBotService;
+import kz.sdu.service.EventService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -25,9 +25,9 @@ public class EventsBotApp extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-
+        EventBotService eventBotService = new EventBotService();
         if (update.hasMessage()) {
-            EventBotMessageHandlingService eventBotService = new EventBotMessageHandlingService(update);
+
             if (update.getMessage().hasText()) {
                 //todo: create new class with thread
                 switch (update.getMessage().getText().trim()) { //checking message on the default command
@@ -38,14 +38,12 @@ public class EventsBotApp extends TelegramLongPollingBot {
                 }
             }
         } else if (update.hasCallbackQuery()) {
-            EventBotQueryHandlingService eventBotService = new EventBotQueryHandlingService(update);
-
             String callbackData = update.getCallbackQuery().getData();
 
             if (callbackData.contains("/edit_account")) {
-                eventBotService.editAccount();
-            } else if (callbackData.contains("/liked_events_account")) {
-                eventBotService.showFavoriteEvents();
+                eventBotService.editAccount(callbackData);
+//            } else if (callbackData.contains("/liked_events_account")) {
+//                eventBotService.showFavoriteEvents();
             } else if (callbackData.contains("_like_event")) {
                 // При нажатии кнопки лайка или дизлайк, сообщение должен изменится
                 // кнопка на противоположную сторону
@@ -64,9 +62,9 @@ public class EventsBotApp extends TelegramLongPollingBot {
                     eventBotService.saveEvent(idEvent);
                 else if (callbackData.contains("remove")) {
                     //remove like message to account
-                    eventBotService.removeEvent(idEvent);
+                    new EventService().removeEvent(idEvent);
                 }
-                eventBotService.editMessage(update, idEvent);
+                eventBotService.editEventMessage(update, idEvent, callbackData);
             } else if (callbackData.contains("/events_account")) {
                 eventBotService.showEvents();
             }

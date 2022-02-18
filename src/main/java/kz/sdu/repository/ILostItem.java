@@ -2,7 +2,7 @@ package kz.sdu.repository;
 
 import kz.sdu.entity.TelegramAccount;
 
-public interface LostedItem {
+public interface ILostItem {
 
     void foundItemUser(TelegramAccount telegramAccount);
 

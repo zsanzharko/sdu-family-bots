@@ -11,14 +11,12 @@ import org.springframework.stereotype.Service;
 @Setter
 public class TelegramAccountService {
 
-    private TelegramAccount accountModel;
     private User user;
 
     public TelegramAccountService() {
     }
 
-    public TelegramAccountService(TelegramAccount accountModel, User user) {
-        this.accountModel = accountModel;
+    public TelegramAccountService(User user) {
         this.user = user;
     }
 

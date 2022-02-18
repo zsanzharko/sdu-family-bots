@@ -64,7 +64,7 @@ public class UserService {
     }
 
     public User findUserByTelegramId(Long telegramId) {
-        return userRepository.findUserByTelegramId(telegramId);
+        return userRepository.findUserByTelegramAccount_Id(telegramId);
     }
 
     public User saveUser(User user) {
