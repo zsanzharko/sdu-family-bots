@@ -3,12 +3,14 @@ package kz.sdu.sdubotsfamily;
 import kz.sdu.bot.challengeBot.component.ChallengeBotApp;
 import kz.sdu.bot.eventsBot.component.EventsBotApp;
 import kz.sdu.bot.helpStudentBot.component.HelpStudentBotApp;
-import kz.sdu.bot.marketPlaceBot.component.MerketPlaceBotApp;
+import kz.sdu.bot.lostAndFoundBot.LostAndFoundBotApp;
+import kz.sdu.bot.marketPlaceBot.component.MarketPlaceBotApp;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
+
 
 @SpringBootApplication
 public class SduBotsFamilyApplication {
@@ -21,7 +23,8 @@ public class SduBotsFamilyApplication {
             telegramBotsApi.registerBot(new EventsBotApp());
             telegramBotsApi.registerBot(new ChallengeBotApp());
             telegramBotsApi.registerBot(new HelpStudentBotApp());
-            telegramBotsApi.registerBot(new MerketPlaceBotApp());
+            telegramBotsApi.registerBot(new MarketPlaceBotApp());
+            telegramBotsApi.registerBot(new LostAndFoundBotApp());
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
