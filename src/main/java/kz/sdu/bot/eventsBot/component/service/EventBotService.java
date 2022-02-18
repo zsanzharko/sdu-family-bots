@@ -2,6 +2,7 @@ package kz.sdu.bot.eventsBot.component.service;
 
 import kz.sdu.bot.service.AuthorizationTelegramService;
 import kz.sdu.bot.service.SendMessagesService;
+import kz.sdu.conf.EventBotConfig;
 import kz.sdu.entity.Event;
 import kz.sdu.entity.TelegramAccount;
 import kz.sdu.bot.eventsBot.component.EventsBotApp;
@@ -12,9 +13,13 @@ import kz.sdu.repository.UserRepository;
 import kz.sdu.service.UserService;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
@@ -28,9 +33,10 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.Arrays;
 import java.util.List;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
-@Service
+@Getter
+@Setter
+@Slf4j
+@Component
 public class EventBotService extends EventsBotApp {
     private Long id;
     private String chatId;
@@ -40,16 +46,12 @@ public class EventBotService extends EventsBotApp {
 
     private User user;
 
-    private final EventRepository eventRepository;
-    private final TelegramAccountRepository accountRepository;
-    private final UserRepository userRepository;
+    private EventRepository eventRepository;
+    private TelegramAccountRepository accountRepository;
+    private UserRepository userRepository;
 
-    final Logger logger = LoggerFactory.getLogger(EventBotService.class);
-
-    public EventBotService(EventRepository eventRepository, TelegramAccountRepository accountRepository, UserRepository userRepository) {
-        this.eventRepository = eventRepository;
-        this.accountRepository = accountRepository;
-        this.userRepository = userRepository;
+    public EventBotService(EventBotConfig config) {
+        super(config);
     }
 
     public void setIds(Long id, String chatId) {
@@ -67,10 +69,10 @@ public class EventBotService extends EventsBotApp {
                     execute(sendPhoto)
                             .getMessageId() // sending this message
             );
-            logger.info("Accepted executing event. Current index - {}", 0);
+            log.info("Accepted executing event. Current index - {}", 0);
         } catch (TelegramApiException e) {
             e.printStackTrace();
-            logger.error("Failed execute the event. Check connection or message event");
+            log.error("Failed execute the event. Check connection or message event");
         } catch (ArrayIndexOutOfBoundsException e) {
             e.printStackTrace();
         }
@@ -126,10 +128,10 @@ public class EventBotService extends EventsBotApp {
                             this.getUser())).getMessageId()
             ); //first will execute message with account information
             // second will set current id to LatestMessageId
-            logger.info("Accepted executing account\n{}", this.getUser().getTelegramAccount());
+            log.info("Accepted executing account\n{}", this.getUser().getTelegramAccount());
         } catch (TelegramApiException e) {
             e.printStackTrace();
-            logger.error("The account could not be displayed because it was not found in" +
+            log.error("The account could not be displayed because it was not found in" +
                     " the list of active accounts. Check list from database or array of accounts");
         }
     }
@@ -177,7 +179,7 @@ public class EventBotService extends EventsBotApp {
             e.printStackTrace();
         } finally {
             getUser().getTelegramAccount().getActivity().setLatestMessageId(null);
-            logger.warn("Latest message has been deleted (null), in telegramAccount {}", getUser().getTelegramAccount().getId());
+            log.warn("Latest message has been deleted (null), in telegramAccount {}", getUser().getTelegramAccount().getId());
         }
     }
 
@@ -199,7 +201,7 @@ public class EventBotService extends EventsBotApp {
             execute(editMessageText);
             execute(editMessageReplyMarkup);
 
-            logger.info(
+            log.info(
                     "Message has been changed.\n" +
                     "Current message id: {}", messageId);
         }  catch (TelegramApiException e) {
