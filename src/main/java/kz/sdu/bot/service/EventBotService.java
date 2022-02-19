@@ -1,25 +1,16 @@
-package kz.sdu.bot.eventsBot.component.service;
+package kz.sdu.bot.service;
 
-import kz.sdu.bot.service.AuthorizationTelegramService;
-import kz.sdu.bot.service.SendMessagesService;
-import kz.sdu.conf.EventBotConfig;
 import kz.sdu.entity.Event;
-import kz.sdu.entity.TelegramAccount;
-import kz.sdu.bot.eventsBot.component.EventsBotApp;
+import kz.sdu.bot.EventsBotApp;
 import kz.sdu.entity.User;
 import kz.sdu.repository.EventRepository;
 import kz.sdu.repository.TelegramAccountRepository;
 import kz.sdu.repository.UserRepository;
 import kz.sdu.service.UserService;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
@@ -36,7 +27,7 @@ import java.util.List;
 @Getter
 @Setter
 @Slf4j
-@Component
+@Service
 public class EventBotService extends EventsBotApp {
     private Long id;
     private String chatId;
@@ -46,18 +37,11 @@ public class EventBotService extends EventsBotApp {
 
     private User user;
 
-    private EventRepository eventRepository;
-    private TelegramAccountRepository accountRepository;
-    private UserRepository userRepository;
-
-    public EventBotService(EventBotConfig config) {
-        super(config);
-    }
 
     public void setIds(Long id, String chatId) {
         this.id = id;
         this.chatId = chatId;
-        this.user = new AuthorizationTelegramService(accountRepository, userRepository).authLogUser(id, chatId);
+//        this.user = new AuthorizationTelegramService(accountRepository, userRepository).authLogUser(id, chatId);
     }
 
     public void showEvents() {
@@ -79,11 +63,12 @@ public class EventBotService extends EventsBotApp {
     }
     public void editEventMessage(Update update, Long idEvent, String callbackData) {
         // Getting events from database, and getting id in events
-        List<Event> events = eventRepository.findAll();
+//        List<Event> events = eventRepository.findAll();
+        List<Event> events = null;
         Long[] eventsId = new Long[events.size()];
 
         for (int i = 0; i < eventsId.length; i++) {
-            eventsId[i] = events.get(i).getID();
+            eventsId[i] = events.get(i).getId();
         }
 
         // generate edit message
@@ -106,6 +91,7 @@ public class EventBotService extends EventsBotApp {
     public void saveEvent(Long idEvent) {
         // Todo save event to account, using some OneToOne or other.
     }
+
     public void editAccount(String callback) {
         SendMessage message = SendMessagesService.sendEditMessage(callback, getChatId());
         try {
@@ -137,7 +123,7 @@ public class EventBotService extends EventsBotApp {
     }
 
     public void defaultAction(Update update) {
-        UserService userService = new UserService(this.user);
+        UserService userService = new UserService();
         // default commands to edit account. Latest saved message will contain with text
         String command = "null";
         String text = this.getUser().getTelegramAccount().getActivity().getLatestMessage().getText();

@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface LostItemRepository extends JpaRepository<LostItem, Long> {
-    List<LostItem> findAllBy(Long ID);
+//    List<LostItem> findAllBy(Long ID);
 }

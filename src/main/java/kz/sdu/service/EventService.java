@@ -5,6 +5,7 @@ import kz.sdu.repository.EventRepository;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -14,20 +15,22 @@ import java.time.ZoneId;
 @Setter
 @Service
 public final class EventService {
-    @Autowired
-    private EventRepository eventRepository;
+//    private final EventRepository eventRepository;
 
-    public EventService() {
+    @Autowired
+    public EventService(/*EventRepository eventRepository*/) {
+//        this.eventRepository = eventRepository;
     }
 
     public void removeEvent(Long id) {
         //todo Check event before to delete
-        eventRepository.deleteById(id);
+//        eventRepository.deleteById(id);
     }
 
     public Event addEvent(Event event) {
         //todo Check data before to save in db, cause in db we have some fields in req not null
-        return eventRepository.save(event);
+        //        return eventRepository.save(event);
+        return null;
     }
 
     /**

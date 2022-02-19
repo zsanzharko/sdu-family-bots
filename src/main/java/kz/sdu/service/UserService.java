@@ -18,32 +18,7 @@ import java.util.List;
 @Setter
 public class UserService {
 
-    private UserRepository userRepository;
-
     private User user;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
-    @ToString.Exclude
-    private TelegramAccountService telegramAccountModel;
-
-    private EventService eventService; // service that works with events
-    private LostItemService lostItemService;
-
-    public UserService(User user) {
-        this.user = user;
-    }
-
-    public UserService(User user, TelegramAccountService telegramAccountModel, EventService eventService) {
-        this.user = user;
-        this.telegramAccountModel = telegramAccountModel;
-        this.eventService = eventService;
-    }
-
-    @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     public boolean setInfoEdit(String command, String text) {
         text = text.trim();
@@ -57,21 +32,5 @@ public class UserService {
             }
         }
         return true;
-    }
-
-    public List<User> findPeople(User user) {
-        return userRepository.findAllByStudentID(user.getStudentID());
-    }
-
-    public User findUserByTelegramId(Long telegramId) {
-        return userRepository.findUserByTelegramAccount_Id(telegramId);
-    }
-
-    public User saveUser(User user) {
-        return userRepository.save(user);
-    }
-
-    private void deleteUser(User user) {
-        userRepository.delete(user);
     }
 }

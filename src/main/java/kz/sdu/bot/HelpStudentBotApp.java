@@ -1,18 +1,18 @@
-package kz.sdu.bot.challengeBot.component;
+package kz.sdu.bot;
 
-import kz.sdu.conf.ChallengeBotConfig;
+import kz.sdu.conf.HelpStudentBotConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Component
-public class ChallengeBotApp extends TelegramLongPollingBot {
+public class HelpStudentBotApp extends TelegramLongPollingBot {
 
-    private final ChallengeBotConfig config;
+    private final HelpStudentBotConfig config;
 
-    public ChallengeBotApp(ChallengeBotConfig config) {
+    @Autowired
+    public HelpStudentBotApp(HelpStudentBotConfig config) {
         this.config = config;
     }
 

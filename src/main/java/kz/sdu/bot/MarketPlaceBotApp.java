@@ -1,4 +1,4 @@
-package kz.sdu.bot.marketPlaceBot.component;
+package kz.sdu.bot;
 
 import kz.sdu.conf.MarketPlaceBotConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,20 +9,21 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @Component
 public class MarketPlaceBotApp extends TelegramLongPollingBot {
 
-    @Autowired private MarketPlaceBotConfig config;
+    private final MarketPlaceBotConfig config;
 
+    @Autowired
     public MarketPlaceBotApp(MarketPlaceBotConfig config) {
         this.config = config;
     }
 
     @Override
     public String getBotUsername() {
-        return "sdu_market_place_bot";
+        return config.getUsername();
     }
 
     @Override
     public String getBotToken() {
-        return System.getenv("bots:sdu_market_place_bot");
+        return config.getToken();
     }
 
     @Override

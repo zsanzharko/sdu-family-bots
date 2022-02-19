@@ -1,6 +1,5 @@
 package kz.sdu.bot.service;
 
-import kz.sdu.entity.TelegramAccount;
 import kz.sdu.bot.utils.InlineKeyboardMarkupTemplate;
 import kz.sdu.entity.User;
 import kz.sdu.service.TelegramAccountService;

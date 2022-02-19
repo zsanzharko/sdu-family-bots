@@ -1,15 +1,9 @@
-package kz.sdu.bot.eventsBot.component;
+package kz.sdu.bot;
 
-import kz.sdu.bot.eventsBot.component.service.EventBotService;
-import kz.sdu.conf.EventBotConfig;
-import kz.sdu.repository.EventRepository;
-import kz.sdu.repository.UserRepository;
+import kz.sdu.bot.service.EventBotService;
 import kz.sdu.service.EventService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -19,22 +13,11 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @Component
 public class EventsBotApp extends TelegramLongPollingBot {
 
-    @Autowired final EventBotConfig config;
-
-    @Autowired private EventRepository eventRepository;
-    @Autowired private UserRepository userRepository;
-
-
-
-    public EventsBotApp(EventBotConfig config) {
-        this.config = config;
-    }
-
     @Override
     public void onUpdateReceived(Update update) {
         log.debug("User:\n" +
                 "account id: {}", update.getMessage().getChat().getId());
-        EventBotService eventBotService = new EventBotService(config);
+        EventBotService eventBotService = new EventBotService();
         eventBotService.setIds(update.getMessage().getChat().getId(), update.getMessage().getChatId().toString());
         if (update.hasMessage()) {
 
@@ -83,11 +66,11 @@ public class EventsBotApp extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return config.getBotUserName();
+        return "sdu_event_bot";
     }
 
     @Override
     public String getBotToken() {
-        return config.getToken();
+        return System.getenv("bots:sdu_event_bot");
     }
 }

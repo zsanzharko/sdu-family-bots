@@ -1,30 +1,43 @@
 package kz.sdu.entity;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
+import javax.persistence.*;
 import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
 
-@Data
-public class Event {
-    private final Long ID;
+@Getter
+@Setter
+@Entity
+@Table(name = "events")
+public class Event extends AbstractBaseEntity{
+    @Transient
     private File image;
+    @Column(name = "title")
     private String title;
+    @Column(name = "description")
     private String description;
+
+    @Column(name = "start_date")
     private LocalDate dateEvent;
+    @Column(name = "start_time")
     private LocalTime timeEvent;
+    @Transient
     private Ticket ticket;
 
     public Event(File image, String title, String description, boolean paid, int countPeople) {
-        this.ID = (long)(Math.random() * Long.MAX_VALUE);
+        this.id = (long)(Math.random() * Long.MAX_VALUE);
         this.image = image;
         this.title = title;
         this.description = description;
-        this.ticket = new Ticket(this.getID(), countPeople);
+        this.ticket = new Ticket(this.getId(), countPeople);
+    }
+
+    public Event() {
+
     }
 
     public String getInformation() {

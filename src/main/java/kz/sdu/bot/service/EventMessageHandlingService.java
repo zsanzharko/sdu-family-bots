@@ -1,19 +1,15 @@
-package kz.sdu.bot.eventsBot.component.service;
+package kz.sdu.bot.service;
 
 import kz.sdu.entity.TelegramAccount;
-import kz.sdu.bot.service.SendMessagesService;
 import kz.sdu.bot.utils.InlineKeyboardMarkupTemplate;
 import kz.sdu.entity.Event;
-import kz.sdu.repository.EventRepository;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public final class EventMessageHandlingService extends SendMessagesService {
@@ -59,14 +55,14 @@ public final class EventMessageHandlingService extends SendMessagesService {
         }
 //        like_text = "❤️Like❤️";
 //        //todo test this. Or rewrite code
-//        like_callback = "/save_like_event&id=" + event.getID() + "&index=" +
+//        like_callback = "/save_like_event&id=" + event.getId() + "&index=" +
 //                (index < events.size() - 1 ? index + 1 : 0);
 //
 //        for (int i = 0; i < telegramAccount.getUser().getEventService().getFavoriteEvent().size(); i++)
-//            if (Objects.equals(telegramAccount.getUser().getEventService().getFavoriteEvent().get(i).getID(), event.getID())) {
+//            if (Objects.equals(telegramAccount.getUser().getEventService().getFavoriteEvent().get(i).getId(), event.getId())) {
 //                like_text = "👎Unlike👎";
 //                like_callback = "/remove_like_event&id=" +
-//                        telegramAccount.getUser().getEventService().getFavoriteEvent().get(i).getID() + "&index=" + i;
+//                        telegramAccount.getUser().getEventService().getFavoriteEvent().get(i).getId() + "&index=" + i;
 //                break;
 //            }
 
@@ -124,14 +120,14 @@ public final class EventMessageHandlingService extends SendMessagesService {
 //            }
 //        }
 //
-//        like_callback = "/save_like_event&id=" + event.getID() + "&index=" +
+//        like_callback = "/save_like_event&id=" + event.getId() + "&index=" +
 //                (index < Event.getRecentEvents().size() - 1 ? index + 1 : 0);
 //
 //        for (int i = 0; i < telegramAccount.getUser().getEventService().getFavoriteEvent().size(); i++) {
-//            if (Objects.equals(telegramAccount.getUser().getEventService().getFavoriteEvent().get(i).getID(), event.getID())) {
+//            if (Objects.equals(telegramAccount.getUser().getEventService().getFavoriteEvent().get(i).getId(), event.getId())) {
 //                like_text = "👎Unlike👎";
 //                like_callback = "/remove_like_event&telegramAccount&id=" + telegramAccount.getUser().
-//                        getEventService().getFavoriteEvent().get(i).getID();
+//                        getEventService().getFavoriteEvent().get(i).getId();
 //                break;
 //            }
 //        }

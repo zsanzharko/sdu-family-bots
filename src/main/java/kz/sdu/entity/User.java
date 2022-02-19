@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 @Setter
 @ToString
 @Entity(name = "User")
-@Table(name = "users")
+@Table(name = "Users")
 public class User extends AbstractBaseEntity {
 
     @Column(name = "name")
@@ -31,8 +31,8 @@ public class User extends AbstractBaseEntity {
     @Column(name = "phone_number")
     private String phoneNumber; // phone number
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "telegram_id", referencedColumnName = "telegram_id")
+    @OneToOne(optional = false, cascade = CascadeType.ALL)
+    @JoinColumn(name = "id", referencedColumnName = "telegram_id")
     private TelegramAccount telegramAccount;
 
     @Transient

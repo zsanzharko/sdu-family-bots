@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TelegramAccountRepository extends JpaRepository<TelegramAccount, Long> {
-    TelegramAccount findTelegramAccountModelById(Long id);
+    TelegramAccount findTelegramAccountByChatId(String id);
 
+    TelegramAccount findTelegramAccountByIdAndChatId(Long id, String chatId);
 }

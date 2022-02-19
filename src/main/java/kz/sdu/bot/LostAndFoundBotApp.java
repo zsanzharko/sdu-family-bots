@@ -1,4 +1,4 @@
-package kz.sdu.bot.lostAndFoundBot;
+package kz.sdu.bot;
 
 import kz.sdu.conf.LostAndFoundBotConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,20 +9,21 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @Component
 public class LostAndFoundBotApp extends TelegramLongPollingBot {
 
-    @Autowired LostAndFoundBotConfig config;
+    private final LostAndFoundBotConfig config;
 
+    @Autowired
     public LostAndFoundBotApp(LostAndFoundBotConfig config) {
         this.config = config;
     }
 
     @Override
     public String getBotUsername() {
-        return "sdu_lost_and_found_bot";
+        return config.getUsername();
     }
 
     @Override
     public String getBotToken() {
-        return System.getenv("bots:sdu_lost_and_found_bot");
+        return config.getToken();
     }
 
     @Override

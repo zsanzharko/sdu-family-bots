@@ -24,17 +24,18 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@Entity (name = "TelegramAccount")
+@Entity
 @Table(name = "telegram_accounts")
 public class TelegramAccount extends AbstractBaseEntity {
+    private String chatId;          // chat ID bot to account
+    @Column(name = "username")
+    private String username;        // telegram username
+
+    @Column(name = "telegram_id")
+    private Long telegramID;
+
     @OneToOne(mappedBy = "telegramAccount")
     private User user;
-
-    private String chatId;          // chat ID bot to account
-
-    @NotNull
-    private Long id;                // unify telegram id account
-    private String username;        // telegram username
 
     @Transient
     private ChatLocation chatLocation;                          // when account was the latest
