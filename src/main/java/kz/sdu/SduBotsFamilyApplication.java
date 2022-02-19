@@ -1,4 +1,4 @@
-package kz.sdu.sdubotsfamily;
+package kz.sdu;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,9 +8,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 
 @SpringBootApplication
-@ComponentScan("kz")
-@EntityScan("src.main.java.kz.sdu.entity")
-@EnableJpaRepositories("kz.sdu.repository")
 public class SduBotsFamilyApplication {
 
     public static void main(String[] args) {

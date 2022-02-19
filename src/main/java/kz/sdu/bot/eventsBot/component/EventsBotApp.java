@@ -2,6 +2,8 @@ package kz.sdu.bot.eventsBot.component;
 
 import kz.sdu.bot.eventsBot.component.service.EventBotService;
 import kz.sdu.conf.EventBotConfig;
+import kz.sdu.repository.EventRepository;
+import kz.sdu.repository.UserRepository;
 import kz.sdu.service.EventService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +16,15 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 //fixme Add updating event with time zone
 
 @Slf4j
-@Service
+@Component
 public class EventsBotApp extends TelegramLongPollingBot {
 
     @Autowired final EventBotConfig config;
+
+    @Autowired private EventRepository eventRepository;
+    @Autowired private UserRepository userRepository;
+
+
 
     public EventsBotApp(EventBotConfig config) {
         this.config = config;
