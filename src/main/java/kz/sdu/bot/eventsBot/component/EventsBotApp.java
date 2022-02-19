@@ -1,16 +1,15 @@
 package kz.sdu.bot.eventsBot.component;
 
 import kz.sdu.bot.eventsBot.component.service.EventBotService;
+import kz.sdu.conf.EventBotConfig;
 import kz.sdu.repository.EventRepository;
-import kz.sdu.repository.TelegramAccountRepository;
 import kz.sdu.repository.UserRepository;
 import kz.sdu.service.EventService;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -18,33 +17,24 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Slf4j
 @Component
-@Configurable
 public class EventsBotApp extends TelegramLongPollingBot {
 
-    final Logger logger = LoggerFactory.getLogger(EventBotService.class);
+    @Autowired final EventBotConfig config;
 
-    @Autowired
-    private EventRepository eventRepository;
-    @Autowired
-    private TelegramAccountRepository accountRepository;
-    @Autowired
-    private UserRepository userRepository;
+    @Autowired private EventRepository eventRepository;
+    @Autowired private UserRepository userRepository;
 
-    @Override
-    public String getBotUsername() {
-        return "sdu_event_bot";
-    }
 
-    @Override
-    public String getBotToken() {
-        return System.getenv("bots:sdu_event_bot");
+
+    public EventsBotApp(EventBotConfig config) {
+        this.config = config;
     }
 
     @Override
     public void onUpdateReceived(Update update) {
-        logger.debug("User:\n" +
+        log.debug("User:\n" +
                 "account id: {}", update.getMessage().getChat().getId());
-        EventBotService eventBotService = new EventBotService(eventRepository, accountRepository, userRepository);
+        EventBotService eventBotService = new EventBotService(config);
         eventBotService.setIds(update.getMessage().getChat().getId(), update.getMessage().getChatId().toString());
         if (update.hasMessage()) {
 
@@ -89,5 +79,15 @@ public class EventsBotApp extends TelegramLongPollingBot {
                 eventBotService.showEvents();
             }
         }
+    }
+
+    @Override
+    public String getBotUsername() {
+        return config.getBotUserName();
+    }
+
+    @Override
+    public String getBotToken() {
+        return config.getToken();
     }
 }

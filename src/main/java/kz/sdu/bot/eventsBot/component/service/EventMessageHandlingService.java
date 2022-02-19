@@ -18,7 +18,7 @@ import java.util.Objects;
 @Service
 public final class EventMessageHandlingService extends SendMessagesService {
 
-    @Autowired private EventRepository eventRepository;
+//    @Autowired private EventRepository eventRepository;
 
     public InlineKeyboardMarkup postViewMarkup(Event event, TelegramAccount telegramAccount, String callbackData) {
         InlineKeyboardMarkup scroll = new InlineKeyboardMarkup();
@@ -32,7 +32,8 @@ public final class EventMessageHandlingService extends SendMessagesService {
                 callbackData.indexOf("&index=") + 7
         ));
 
-        List<Event> events = eventRepository.findAll();
+        List<Event> events = null;
+//        List<Event> events = eventRepository.findAll();
 
         if (events.size() > 1) {
 
@@ -164,7 +165,8 @@ public final class EventMessageHandlingService extends SendMessagesService {
         int index = Integer.parseInt(callbackData.substring(
                 callbackData.indexOf("&index=") + 7
         ));
-        List<Event> events = eventRepository.findAll();
+//        List<Event> events = eventRepository.findAll();
+        List<Event> events = null;
 
         sendPhoto.setCaption(events.get(index).getInformation());
 
