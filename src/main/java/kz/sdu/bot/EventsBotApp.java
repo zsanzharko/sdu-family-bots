@@ -1,8 +1,11 @@
 package kz.sdu.bot;
 
 import kz.sdu.bot.service.EventBotService;
+import kz.sdu.service.EventBotRepositoryService;
 import kz.sdu.service.EventService;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -11,13 +14,21 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Slf4j
 @Component
+@Getter
 public class EventsBotApp extends TelegramLongPollingBot {
+
+    private final EventBotRepositoryService service;
+
+    @Autowired
+    public EventsBotApp(EventBotRepositoryService service) {
+        this.service = service;
+    }
 
     @Override
     public void onUpdateReceived(Update update) {
         log.debug("User:\n" +
                 "account id: {}", update.getMessage().getChat().getId());
-        EventBotService eventBotService = new EventBotService();
+        EventBotService eventBotService = new EventBotService(service);
         eventBotService.setIds(update.getMessage().getChat().getId(), update.getMessage().getChatId().toString());
         if (update.hasMessage()) {
 

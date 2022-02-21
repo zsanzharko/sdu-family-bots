@@ -10,12 +10,11 @@ import java.util.List;
 
 @Repository
 public interface UserRepository extends CrudRepository<User, Long> {
-    @Lock(LockModeType.READ)
-    List<User> findAllByStudentID(String studentId);
 
     @Lock(LockModeType.READ)
-    User findUserByStudentID(String studentId);
+    User findUserByTelegramAccount_TelegramID(Long telegramId);
 
-    @Lock(LockModeType.READ)
-    User findUserByTelegramAccount_Id(Long telegramId);
+    void deleteUserByTelegramAccount_TelegramID(Long telegramId);
+
+    List<User> findAllByEmail(String email);
 }

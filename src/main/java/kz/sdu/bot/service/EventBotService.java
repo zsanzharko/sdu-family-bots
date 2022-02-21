@@ -3,14 +3,11 @@ package kz.sdu.bot.service;
 import kz.sdu.entity.Event;
 import kz.sdu.bot.EventsBotApp;
 import kz.sdu.entity.User;
-import kz.sdu.repository.EventRepository;
-import kz.sdu.repository.TelegramAccountRepository;
-import kz.sdu.repository.UserRepository;
+import kz.sdu.service.EventBotRepositoryService;
 import kz.sdu.service.UserService;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
@@ -28,7 +25,7 @@ import java.util.List;
 @Setter
 @Slf4j
 @Service
-public class EventBotService extends EventsBotApp {
+public class EventBotService extends EventsBotApp  {
     private Long id;
     private String chatId;
     private String username;
@@ -36,6 +33,10 @@ public class EventBotService extends EventsBotApp {
     private String surname;
 
     private User user;
+
+    public EventBotService(EventBotRepositoryService service) {
+        super(service);
+    }
 
 
     public void setIds(Long id, String chatId) {

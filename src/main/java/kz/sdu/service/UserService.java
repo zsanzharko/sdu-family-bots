@@ -26,8 +26,8 @@ public class UserService {
             case "/edit_account_name" -> getUser().setName(text);
             case "/edit_account_surname" -> getUser().setSurname(text);
             case "/edit_account_student_id" -> {
-                if (User.studentIDChecking(text))
-                    getUser().setStudentID(text);
+                if (StudentService.studentIDChecking(text))
+                    getUser().getStudent().setStudentID(text);
                 else return false;
             }
         }

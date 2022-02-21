@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
 
 @Getter
 @Setter
-@ToString
 @Entity(name = "User")
 @Table(name = "Users")
 public class User extends AbstractBaseEntity {
@@ -22,8 +21,6 @@ public class User extends AbstractBaseEntity {
     @Column(name = "surname")
     private String surname;     // user surname
 
-    @Column(name = "student_id")
-    private String studentID;   // student id
 
     @Column(name = "email")
     private String email; // email
@@ -31,8 +28,12 @@ public class User extends AbstractBaseEntity {
     @Column(name = "phone_number")
     private String phoneNumber; // phone number
 
-    @OneToOne(optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "id", referencedColumnName = "telegram_id")
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "student_id", referencedColumnName = "student_id")
+    private Student student;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "telegram_id", referencedColumnName = "telegram_id")
     private TelegramAccount telegramAccount;
 
     @Transient
@@ -53,23 +54,23 @@ public class User extends AbstractBaseEntity {
         this.surname = surname;
     }
 
-    public User(TelegramAccount telegramAccount, String name, String surname, String studentID) {
+    public User(TelegramAccount telegramAccount, String name, String surname, Student student) {
         this.telegramAccount = telegramAccount;
         this.name = name;
         this.surname = surname;
-        this.studentID = studentID;
+        this.student = student;
     }
 
     public User(TelegramAccount telegramAccount) {
         this.telegramAccount = telegramAccount;
     }
 
-    public User(String name, String surname, String studentID, String email, String phoneNumber,
+    public User(String name, String surname, Student student, String email, String phoneNumber,
                 TelegramAccount telegramAccount, List<Event> favoriteEvents,
                 List<Event> registeredEvents, List<LostItem> lostItems, List<LostItem> foundedItems) {
         this.name = name;
         this.surname = surname;
-        this.studentID = studentID;
+        this.student = student;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.telegramAccount = telegramAccount;
@@ -77,24 +78,5 @@ public class User extends AbstractBaseEntity {
         this.registeredEvents = registeredEvents;
         this.lostItems = lostItems;
         this.foundedItems = foundedItems;
-    }
-
-    public static boolean studentIDChecking(String studentID) {
-        Pattern pattern = Pattern.compile("^[0-9]{9}$");
-        Matcher matcher = pattern.matcher(studentID);
-        return matcher.find();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        User user = (User) o;
-        return id != null && Objects.equals(id, user.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
     }
 }

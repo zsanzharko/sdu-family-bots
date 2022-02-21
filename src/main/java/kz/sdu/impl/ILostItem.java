@@ -1,4 +1,4 @@
-package kz.sdu.repository;
+package kz.sdu.impl;
 
 import kz.sdu.entity.TelegramAccount;
 

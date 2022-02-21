@@ -23,19 +23,22 @@ import java.util.Objects;
 
 @Getter
 @Setter
-@ToString
 @Entity
 @Table(name = "telegram_accounts")
 public class TelegramAccount extends AbstractBaseEntity {
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "telegramAccount")
+    private User user;
+
+    @Column(name = "chat_id")
     private String chatId;          // chat ID bot to account
+
     @Column(name = "username")
     private String username;        // telegram username
 
     @Column(name = "telegram_id")
     private Long telegramID;
 
-    @OneToOne(mappedBy = "telegramAccount")
-    private User user;
 
     @Transient
     private ChatLocation chatLocation;                          // when account was the latest
@@ -63,18 +66,5 @@ public class TelegramAccount extends AbstractBaseEntity {
 
     public TelegramAccount() {
 
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        TelegramAccount telegramAccount = (TelegramAccount) o;
-        return id != null && Objects.equals(id, telegramAccount.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
     }
 }

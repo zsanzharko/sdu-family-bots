@@ -23,7 +23,7 @@ public class TelegramAccountService {
     public String getInformationAccount() {
         return "Name: " + getUser().getName() + "\n" +
                 "Surname: " + getUser().getSurname() + "\n" +
-                "student ID: " + getUser().getStudentID() + "\n" +
+                "student ID: " + getUser().getStudent().getStudentID() + "\n" +
                 "Liked Event: " + getUser().getFavoriteEvents().size();
 
     }

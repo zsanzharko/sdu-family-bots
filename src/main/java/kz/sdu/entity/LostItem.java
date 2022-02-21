@@ -1,6 +1,6 @@
 package kz.sdu.entity;
 
-import kz.sdu.repository.ILostItem;
+import kz.sdu.impl.ILostItem;
 import lombok.Getter;
 import lombok.Setter;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
