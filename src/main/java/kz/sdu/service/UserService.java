@@ -2,35 +2,42 @@ package kz.sdu.service;
 
 import kz.sdu.entity.User;
 import kz.sdu.repository.UserRepository;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.FetchType;
-import javax.persistence.MapsId;
-import javax.persistence.OneToOne;
-import java.util.List;
-
 @Service
-@Getter
-@Setter
 public class UserService {
 
-    private User user;
+    private final UserRepository userRepository;
 
-    public boolean setInfoEdit(String command, String text) {
-        text = text.trim();
-        switch (command) {
-            case "/edit_account_name" -> getUser().setName(text);
-            case "/edit_account_surname" -> getUser().setSurname(text);
-            case "/edit_account_student_id" -> {
-                if (StudentService.studentIDChecking(text))
-                    getUser().getStudent().setStudentID(text);
-                else return false;
-            }
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public User save(User user) {
+        User db_user = userRepository.findUserByTelegramAccount_TelegramID(user.getTelegramAccount().getTelegramID());
+        if (db_user == null) {
+            return userRepository.save(user);
         }
-        return true;
+        return user;
+    }
+
+    public void updateAndSave(User user) {
+        User db_user = userRepository.findUserByTelegramAccount_TelegramID(user.getTelegramAccount().getTelegramID());
+        if (user == db_user) {
+            return;
+        }
+        userRepository.save(user);
+    }
+
+    public void delete(User user) {
+        userRepository.delete(user);
+    }
+
+    public void deleteByUsername(Long telegramId) {
+        userRepository.deleteUserByTelegramAccount_TelegramID(telegramId);
+    }
+
+    public void deleteById(Long id) {
+        userRepository.deleteById(id);
     }
 }

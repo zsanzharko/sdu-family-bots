@@ -18,6 +18,8 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 @Getter
 public class EventsBotApp extends TelegramLongPollingBot {
 
+    private static EventBotService service;
+
     private final EventBotRepositoryService botService;
     private final EventBotConfig config;
 
@@ -25,14 +27,23 @@ public class EventsBotApp extends TelegramLongPollingBot {
     public EventsBotApp(EventBotRepositoryService botService, EventBotConfig config) {
         this.botService = botService;
         this.config = config;
+        service = new EventBotService(botService);
     }
 
     @Override
     public void onUpdateReceived(Update update) {
         log.debug("User:\n" +
                 "account id: {}", update.getMessage().getChat().getId());
-//        EventBotService eventBotService = new EventBotService(botService);
-//        eventBotService.setIds(update.getMessage().getChat().getId(), update.getMessage().getChatId().toString());
+
+        final Long telegram_id = update.getMessage().getChat().getId();
+        final String telegram_chat_id = String.valueOf(update.getMessage().getChatId());
+
+
+        // preprocessing
+        {
+            service.telegramPreprocessing(telegram_id, telegram_chat_id);
+            service.setUser(botService.getAuthTelegramService().authLogUser(telegram_id, telegram_chat_id));
+        }
         if (update.hasMessage()) {
 
             if (update.getMessage().hasText()) {
@@ -85,7 +96,7 @@ public class EventsBotApp extends TelegramLongPollingBot {
     }
 
     private void defaultAction(Update update) {
-        EventBotService service = new EventBotService(botService);
+        service = new EventBotService(botService);
         try {
             execute(service.defaultAction(update));
         } catch (TelegramApiException e) {
@@ -94,7 +105,6 @@ public class EventsBotApp extends TelegramLongPollingBot {
     }
 
     private void deleteEventMessage(String chatId) {
-        EventBotService service = new EventBotService(botService);
         try {
             execute(service.deleteEventMessage(chatId));
         } catch (TelegramApiException e) {
@@ -106,7 +116,6 @@ public class EventsBotApp extends TelegramLongPollingBot {
     }
 
     private void showEvents() {
-        EventBotService service = new EventBotService(botService);
         try {
             service
                     .getUser()
@@ -123,7 +132,6 @@ public class EventsBotApp extends TelegramLongPollingBot {
     }
 
     private void editEventMessage(Update update, long idEvent, String callbackData) {
-        EventBotService service = new EventBotService(botService);
         try {
             execute(service.editEventMessage(update, idEvent, callbackData));
         } catch (TelegramApiException e) {
@@ -132,8 +140,6 @@ public class EventsBotApp extends TelegramLongPollingBot {
     }
 
     private void editAccount(String callback) {
-        EventBotService service = new EventBotService(botService);
-
         try {
             execute(service.editAccount(callback));
         } catch (TelegramApiException e) {
@@ -142,7 +148,6 @@ public class EventsBotApp extends TelegramLongPollingBot {
     }
 
     private void showAccount() {
-        EventBotService service = new EventBotService(botService);
         try {
             service
                     .getUser()

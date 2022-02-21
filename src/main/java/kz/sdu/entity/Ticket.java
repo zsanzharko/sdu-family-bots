@@ -24,7 +24,7 @@ public class Ticket extends AbstractBaseEntity {
     private File fileTicket;
 
     @Column(name = "cost", nullable = false)
-    private double cost; // KZT. 450 tg min cost
+    private float cost; // KZT. 450 tg min cost
 
     @Column(name = "available_count")
     private int availableCountPeople;
@@ -38,15 +38,5 @@ public class Ticket extends AbstractBaseEntity {
 
     public Ticket() {
 
-    }
-
-    public void paying(boolean paid, double cost) {
-        setCost(cost);
-    }
-
-    private void setCost(double cost) {
-        if (cost > 450.0 && cost < 4_369_647.00)
-            this.cost = cost;
-        else this.cost = 0;
     }
 }

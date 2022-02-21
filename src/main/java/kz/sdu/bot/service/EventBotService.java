@@ -3,6 +3,7 @@ package kz.sdu.bot.service;
 import kz.sdu.entity.Event;
 import kz.sdu.entity.User;
 import kz.sdu.service.EventBotRepositoryService;
+import kz.sdu.service.StudentService;
 import kz.sdu.service.UserService;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,8 +24,6 @@ import java.util.List;
 @Slf4j
 @Service
 public class EventBotService {
-    private Long id;
-    private String chatId;
     private String username;
     private String name;
     private String surname;
@@ -38,15 +37,15 @@ public class EventBotService {
     }
 
 
-    public void setIds(Long id, String chatId) {
-        this.id = id;
-        this.chatId = chatId;
-//        this.user = new AuthorizationTelegramService(accountRepository, userRepository).authLogUser(id, chatId);
+    public void telegramPreprocessing(Long id, String chatId) {
+        user.getTelegramAccount().setTelegramID(id);
+        user.getTelegramAccount().setChatId(chatId);
     }
 
     public SendPhoto showEvents() {
         //fixme if event will empty, try to handling
-        return new EventMessageHandlingService().sendEventMessage(getChatId(),
+        return new EventMessageHandlingService().sendEventMessage(
+                user.getTelegramAccount().getChatId(),
                 this.getUser().getTelegramAccount(),
                 "/events_account&index=" + 0);// sending this message
 
@@ -60,7 +59,7 @@ public class EventBotService {
         // generate edit message
 
         return new EditMessageReplyMarkup(
-                getChatId(),
+                user.getTelegramAccount().getChatId(),
                 this.getUser().getTelegramAccount().getActivity().getLatestMessageId(),
                 update.getCallbackQuery().getInlineMessageId(),
                 new EventMessageHandlingService().postViewMarkup(
@@ -71,10 +70,14 @@ public class EventBotService {
     }
 
     public SendMessage editAccount(String callback) {
-        SendMessage message = SendMessagesService.sendEditMessage(callback, getChatId());
+        SendMessage message = SendMessagesService.sendEditMessage(
+                callback,
+                user.getTelegramAccount().getChatId());
         // check if it is account setting, or we can do edit this account
         if (callback.length() == 13) {
-            return (SendMessagesService.getEditAccountTools(getChatId(), this.getUser()));
+            return (SendMessagesService.getEditAccountTools(
+                    user.getTelegramAccount().getChatId(),
+                    user));
         } else {
             this.getUser().getTelegramAccount().getActivity().setLatestMessage(message);
             return message;
@@ -83,12 +86,12 @@ public class EventBotService {
     }
 
     public SendMessage showAccount() {
-        return SendMessagesService.getAccountMessageInformation(getChatId(),
+        return SendMessagesService.getAccountMessageInformation(
+                user.getTelegramAccount().getChatId(),
                 this.getUser());
     }
 
     public SendMessage defaultAction(Update update) {
-        UserService userService = new UserService();
         // default commands to edit account. Latest saved message will contain with text
         String command = "null";
         String text = this.getUser().getTelegramAccount().getActivity().getLatestMessage().getText();
@@ -99,17 +102,22 @@ public class EventBotService {
         } else if (text.contains("student ID")) {
             command = "/edit_account_student_id";
         }
-        if (!userService.setInfoEdit(command, update.getMessage().getText())) {
+        if (!setInfoEdit(
+                this.user,
+                command,
+                update.getMessage().getText())) {
             //if user will wrong give answer, we send a message with text
             //At this moment we don't set to The Latest Message, cause all edit, will function
             //not buttons
-            return new SendMessage(getChatId(), "Please try again");
+            return new SendMessage(
+                    user.getTelegramAccount().getChatId(),
+                    "Please try again");
         }
 
         //when user give answer bot otherwise send message that will show the account
         return SendMessagesService
                 .getAccountMessageInformation(
-                        getChatId(),
+                        user.getTelegramAccount().getChatId(),
                         this.getUser());
     }
 
@@ -119,6 +127,27 @@ public class EventBotService {
         deleteMessage.setMessageId(getUser().getTelegramAccount().getActivity().getLatestMessageId());
 
         return deleteMessage;
+    }
+
+    public boolean setInfoEdit(User user, String command, String text) {
+        text = text.trim();
+        switch (command) {
+            case "/edit_account_name" -> {
+                user.setName(text);
+                service.getUserService().updateAndSave(user);
+            }
+            case "/edit_account_surname" -> {
+                user.setSurname(text);
+                service.getUserService().updateAndSave(user);
+            }
+            case "/edit_account_student_id" -> {
+                if (StudentService.studentIDChecking(text)) {
+                    user.getStudent().setStudentID(text);
+                    service.getUserService().updateAndSave(user);
+                } else return false;
+            }
+        }
+        return true;
     }
 
 //    public void editEventMessage(String chatId, String text, InlineKeyboardMarkup markup) {
