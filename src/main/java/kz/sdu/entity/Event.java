@@ -1,11 +1,10 @@
 package kz.sdu.entity;
 
-import lombok.Data;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -14,26 +13,30 @@ import java.time.LocalTime;
 @Entity
 @Table(name = "events")
 public class Event extends AbstractBaseEntity{
-    @Transient
-    private File image;
+
+    @Column(name = "image_file_id")
+    private Long imageFileId;
     @Column(name = "title")
+    @NonNull
     private String title;
     @Column(name = "description")
     private String description;
 
     @Column(name = "start_date")
+    @NonNull
     private LocalDate dateEvent;
     @Column(name = "start_time")
+    @NonNull
     private LocalTime timeEvent;
     @Transient
     private Ticket ticket;
 
-    public Event(File image, String title, String description, boolean paid, int countPeople) {
-        this.id = (long)(Math.random() * Long.MAX_VALUE);
-        this.image = image;
+    public Event(Long imageFileId, @NonNull String title, String description, boolean isPaid, int countPeople) {
+        this.imageFileId = imageFileId;
         this.title = title;
         this.description = description;
         this.ticket = new Ticket(this.getId(), countPeople);
+        this.ticket.setPaid(isPaid);
     }
 
     public Event() {
@@ -46,11 +49,11 @@ public class Event extends AbstractBaseEntity{
                 "Payment: " + (getTicket().isPaid() ?
                 getTicket().getCost() + " KZT." : "FREE") + "\n" +
                 "People: " + getTicket().getCountPeople() + "\n" +
-                "Start Time: " + getDateEvent().toString() +
-                " " + getTimeEvent().toString();
+                "Start Time: " + getDateEvent() +
+                " " + getTimeEvent();
     }
 
-    public void setTimeEvent(LocalDate dateEvent, LocalTime timeEvent) {
+    public void setTimeEvent(@NonNull LocalDate dateEvent, @NonNull LocalTime timeEvent) {
         setTimeEvent(timeEvent);
         setDateEvent(dateEvent);
     }

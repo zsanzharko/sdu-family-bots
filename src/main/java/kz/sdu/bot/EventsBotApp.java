@@ -3,7 +3,6 @@ package kz.sdu.bot;
 import kz.sdu.bot.service.EventBotService;
 import kz.sdu.conf.EventBotConfig;
 import kz.sdu.service.EventBotRepositoryService;
-import kz.sdu.service.EventService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +70,8 @@ public class EventsBotApp extends TelegramLongPollingBot {
                     saveEvent(idEvent);
                 else if (callbackData.contains("remove")) {
                     //remove like message to account
-                    new EventService().removeEvent(idEvent);
+//                    new EventService().removeEvent(idEvent);
+                    // fixme
                 }
                 editEventMessage(update, idEvent, callbackData);
             } else if (callbackData.contains("/events_account")) {

@@ -56,13 +56,8 @@ public class EventBotService {
 
     public EditMessageReplyMarkup editEventMessage(Update update, Long idEvent, String callbackData) {
         // Getting events from database, and getting id in events
-//        List<Event> events = eventRepository.findAll();
-        List<Event> events = null;
-        Long[] eventsId = new Long[events.size()];
-
-        for (int i = 0; i < eventsId.length; i++) {
-            eventsId[i] = events.get(i).getId();
-        }
+        List<Event> events = service.getEventService().getEvents();
+        Long[] eventsId = service.getEventService().getEventsID(events);
 
         // generate edit message
 
@@ -75,10 +70,6 @@ public class EventBotService {
                                 Arrays.binarySearch(eventsId, idEvent)),
                         this.getUser().getTelegramAccount(),
                         callbackData));
-    }
-
-    public void saveEvent(Long idEvent) {
-        // Todo save event to account, using some OneToOne or other.
     }
 
     public SendMessage editAccount(String callback) {

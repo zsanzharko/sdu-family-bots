@@ -166,8 +166,9 @@ public final class EventMessageHandlingService extends SendMessagesService {
 
         sendPhoto.setCaption(events.get(index).getInformation());
 
-        if (events.get(index).getImage() != null) {
-            sendPhoto.setPhoto(new InputFile(events.get(index).getImage()));
+        if (events.get(index).getImageFileId() != null) {
+            // todo check information about sending photo with id
+//            sendPhoto.setPhoto(new InputFile(events.get(index).getImage()));
         }
 
         if (callbackData.contains("/events")) {
