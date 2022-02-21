@@ -25,18 +25,22 @@ public class Event extends AbstractBaseEntity{
     @Column(name = "start_date")
     @NonNull
     private LocalDate dateEvent;
+
     @Column(name = "start_time")
     @NonNull
     private LocalTime timeEvent;
-    @Transient
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ticket_id", referencedColumnName = "id")
+    @NonNull
     private Ticket ticket;
 
-    public Event(Long imageFileId, @NonNull String title, String description, boolean isPaid, int countPeople) {
+    public Event(Long imageFileId, @NonNull String title, String description, int countPeople) {
         this.imageFileId = imageFileId;
         this.title = title;
         this.description = description;
-        this.ticket = new Ticket(this.getId(), countPeople);
-        this.ticket.setPaid(isPaid);
+        this.ticket = new Ticket(countPeople);
+
     }
 
     public Event() {
@@ -46,9 +50,9 @@ public class Event extends AbstractBaseEntity{
     public String getInformation() {
         return getTitle() + "\n" +
                 getDescription() + "\n" +
-                "Payment: " + (getTicket().isPaid() ?
+                "Payment: " + (getTicket().getCost() != 0 ?
                 getTicket().getCost() + " KZT." : "FREE") + "\n" +
-                "People: " + getTicket().getCountPeople() + "\n" +
+                "People: " + getTicket().getTotalCountPeople() + "\n" +
                 "Start Time: " + getDateEvent() +
                 " " + getTimeEvent();
     }

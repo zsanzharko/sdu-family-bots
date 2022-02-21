@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
+import java.time.ZoneId;
 import java.util.List;
 
 @Getter
@@ -52,8 +53,10 @@ public final class EventService {
      * It will do, cause all events does not interested normally student
      */
     public List<Event> getEvents() {
-        final LocalDate current_date = LocalDate.now();
-        final LocalTime current_time = LocalTime.now();
+        final ZoneId zoneId = ZoneId.of("Asia/Almaty");
+
+        final LocalDate current_date = LocalDate.now(zoneId);
+        final LocalTime current_time = LocalTime.now(zoneId);
 
         final LocalDate end_date = LocalDate.of(
                 current_date.getYear(),

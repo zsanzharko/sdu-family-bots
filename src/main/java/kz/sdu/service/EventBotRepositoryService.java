@@ -1,7 +1,6 @@
 package kz.sdu.service;
 
 import kz.sdu.bot.service.AuthorizationTelegramService;
-import kz.sdu.entity.Event;
 import kz.sdu.entity.User;
 import kz.sdu.repository.EventRepository;
 import kz.sdu.repository.TelegramAccountRepository;
@@ -10,11 +9,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.Month;
-import java.util.List;
 
 @Service
 @Getter

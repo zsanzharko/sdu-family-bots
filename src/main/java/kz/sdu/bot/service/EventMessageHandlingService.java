@@ -69,7 +69,7 @@ public final class EventMessageHandlingService extends SendMessagesService {
         String paidButtonText;
         String paidButtonCallback;
 
-        if (event.getTicket().isPaid()) {
+        if (event.getTicket().getCost() != 0) {
             paidButtonText = "💵Buy";
             paidButtonCallback = "/buy_ticket_event";
         } else {
