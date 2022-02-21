@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 //fixme Fix classes
@@ -25,7 +26,7 @@ public final class AuthorizationTelegramService {
     }
 
     public User authLogUser(Long id, String chatId) {
-        User account = userRepository.findUserByTelegramAccount_Id(accountRepository.findTelegramAccountByIdAndChatId(id, chatId).getId());
+        User account = userRepository.findUserByTelegramAccount_TelegramID(accountRepository.findTelegramAccountByIdAndChatId(id, chatId).getId());
         if (account != null)
             return addAccount(account);
         return addAccount(new User(new TelegramAccount(id, chatId)));
