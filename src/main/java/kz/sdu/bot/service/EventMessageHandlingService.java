@@ -1,20 +1,30 @@
 package kz.sdu.bot.service;
 
-import kz.sdu.entity.TelegramAccount;
 import kz.sdu.bot.utils.InlineKeyboardMarkupTemplate;
 import kz.sdu.entity.Event;
-import org.slf4j.LoggerFactory;
+import kz.sdu.entity.TelegramAccount;
+import kz.sdu.service.EventService;
+import kz.sdu.service.UserService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 import java.util.List;
 
 @Service
+@Slf4j
 public final class EventMessageHandlingService extends SendMessagesService {
 
-//    @Autowired private EventRepository eventRepository;
+    private static EventService eventService;
+
+    @Autowired
+    public EventMessageHandlingService(UserService userService, EventService eventService) {
+        super(userService);
+        EventMessageHandlingService.eventService = eventService;
+    }
+
 
     public InlineKeyboardMarkup postViewMarkup(Event event, TelegramAccount telegramAccount, String callbackData) {
         InlineKeyboardMarkup scroll = new InlineKeyboardMarkup();
@@ -28,8 +38,7 @@ public final class EventMessageHandlingService extends SendMessagesService {
                 callbackData.indexOf("&index=") + 7
         ));
 
-        List<Event> events = null;
-//        List<Event> events = eventRepository.findAll();
+        List<Event> events = eventService.getEvents();
 
         if (events.size() > 1) {
 
@@ -162,7 +171,7 @@ public final class EventMessageHandlingService extends SendMessagesService {
                 callbackData.indexOf("&index=") + 7
         ));
 //        List<Event> events = eventRepository.findAll();
-        List<Event> events = null;
+        List<Event> events = eventService.getEvents();
 
         sendPhoto.setCaption(events.get(index).getInformation());
 
@@ -178,8 +187,7 @@ public final class EventMessageHandlingService extends SendMessagesService {
 //            sendPhoto.setReplyMarkup(favoritePostViewMarkup(
 //                    telegramAccount.getUser().getEventService().getFavoriteEvent().get(index), telegramAccount, callbackData));
 //        }
-        LoggerFactory.getLogger(EventMessageHandlingService.class)
-                .info("Picked information");
+        log.info("Picked information");
         return sendPhoto;
     }
 }

@@ -1,13 +1,10 @@
 package kz.sdu.entity;
 
-import lombok.*;
-import org.hibernate.Hibernate;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Getter
 @Setter
@@ -21,6 +18,8 @@ public class User extends AbstractBaseEntity {
     @Column(name = "surname")
     private String surname;     // user surname
 
+    @Column(name = "bio")
+    private String bio;
 
     @Column(name = "email")
     private String email; // email
@@ -28,11 +27,11 @@ public class User extends AbstractBaseEntity {
     @Column(name = "phone_number")
     private String phoneNumber; // phone number
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "student_id", referencedColumnName = "student_id")
     private Student student;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE})
     @JoinColumn(name = "telegram_id", referencedColumnName = "telegram_id")
     private TelegramAccount telegramAccount;
 

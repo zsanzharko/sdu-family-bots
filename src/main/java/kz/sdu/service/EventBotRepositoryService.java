@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Service
 public class EventBotRepositoryService {
@@ -37,8 +38,8 @@ public class EventBotRepositoryService {
         this.ticketService = new TicketService(ticketRepository);
     }
 
-    public User authUser(@NonNull Long telegramAccountId, @NonNull String chatId) {
-        return authTelegramService.authLogUser(telegramAccountId, chatId);
+    public User authUser(@NonNull Update update) {
+        return authTelegramService.authLogUser(update);
     }
 
 }

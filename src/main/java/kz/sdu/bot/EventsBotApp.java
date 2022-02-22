@@ -32,18 +32,15 @@ public class EventsBotApp extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        log.debug("User:\n" +
+        log.info("User:\n" +
                 "account id: {}", update.getMessage().getChat().getId());
 
         final Long telegram_id = update.getMessage().getChat().getId();
         final String telegram_chat_id = String.valueOf(update.getMessage().getChatId());
 
-
         // preprocessing
-        {
-            service.telegramPreprocessing(telegram_id, telegram_chat_id);
-            service.setUser(botService.getAuthTelegramService().authLogUser(telegram_id, telegram_chat_id));
-        }
+        service.telegramPreprocessing(update);
+
         if (update.hasMessage()) {
 
             if (update.getMessage().hasText()) {
@@ -78,10 +75,11 @@ public class EventsBotApp extends TelegramLongPollingBot {
 
                 if (callbackData.contains("save"))
                     //save like message to account
-                    saveEvent(idEvent);
+                    botService.getEventService().saveEvent(idEvent,
+                            update.getCallbackQuery().getMessage().getChat().getId()); // fixme debug this code
                 else if (callbackData.contains("remove")) {
                     //remove like message to account
-//                    new EventService().removeEvent(idEvent);
+                    botService.getEventService().removeEvent(idEvent);
                     // fixme
                 }
                 editEventMessage(update, idEvent, callbackData);
@@ -89,10 +87,6 @@ public class EventsBotApp extends TelegramLongPollingBot {
                 showEvents();
             }
         }
-    }
-
-    public void saveEvent(Long idEvent) {
-        // Todo save event to account, using some OneToOne or other.
     }
 
     private void defaultAction(Update update) {
@@ -121,7 +115,9 @@ public class EventsBotApp extends TelegramLongPollingBot {
                     .getUser()
                     .getTelegramAccount()
                     .getActivity()
-                    .setLatestMessageId(execute(service.showEvents()).getMessageId());
+                    .setLatestMessageId(execute
+                            (service.showEvents())
+                            .getMessageId());
             log.info("Accepted executing event. Current index - {}", 0);
         } catch (TelegramApiException e) {
             e.printStackTrace();

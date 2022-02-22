@@ -4,7 +4,6 @@ import kz.sdu.entity.Event;
 import kz.sdu.entity.User;
 import kz.sdu.service.EventBotRepositoryService;
 import kz.sdu.service.StudentService;
-import kz.sdu.service.UserService;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -30,21 +29,23 @@ public class EventBotService {
 
     private User user;
 
+    private static EventMessageHandlingService eventMessageHandlingService;
+
     private final EventBotRepositoryService service;
 
     public EventBotService(EventBotRepositoryService service) {
         this.service = service;
+        eventMessageHandlingService = new EventMessageHandlingService(
+                service.getUserService(), service.getEventService());
     }
 
-
-    public void telegramPreprocessing(Long id, String chatId) {
-        user.getTelegramAccount().setTelegramID(id);
-        user.getTelegramAccount().setChatId(chatId);
+    public void telegramPreprocessing(Update update) {
+        user = service.authUser(update);
     }
 
     public SendPhoto showEvents() {
         //fixme if event will empty, try to handling
-        return new EventMessageHandlingService().sendEventMessage(
+        return eventMessageHandlingService.sendEventMessage(
                 user.getTelegramAccount().getChatId(),
                 this.getUser().getTelegramAccount(),
                 "/events_account&index=" + 0);// sending this message
@@ -62,7 +63,7 @@ public class EventBotService {
                 user.getTelegramAccount().getChatId(),
                 this.getUser().getTelegramAccount().getActivity().getLatestMessageId(),
                 update.getCallbackQuery().getInlineMessageId(),
-                new EventMessageHandlingService().postViewMarkup(
+                eventMessageHandlingService.postViewMarkup(
                         events.get(
                                 Arrays.binarySearch(eventsId, idEvent)),
                         this.getUser().getTelegramAccount(),
@@ -70,12 +71,12 @@ public class EventBotService {
     }
 
     public SendMessage editAccount(String callback) {
-        SendMessage message = SendMessagesService.sendEditMessage(
+        SendMessage message = eventMessageHandlingService.sendEditMessage(
                 callback,
                 user.getTelegramAccount().getChatId());
         // check if it is account setting, or we can do edit this account
         if (callback.length() == 13) {
-            return (SendMessagesService.getEditAccountTools(
+            return (eventMessageHandlingService.getEditAccountTools(
                     user.getTelegramAccount().getChatId(),
                     user));
         } else {
@@ -86,7 +87,7 @@ public class EventBotService {
     }
 
     public SendMessage showAccount() {
-        return SendMessagesService.getAccountMessageInformation(
+        return eventMessageHandlingService.getAccountMessageInformation(
                 user.getTelegramAccount().getChatId(),
                 this.getUser());
     }
@@ -115,7 +116,7 @@ public class EventBotService {
         }
 
         //when user give answer bot otherwise send message that will show the account
-        return SendMessagesService
+        return eventMessageHandlingService
                 .getAccountMessageInformation(
                         user.getTelegramAccount().getChatId(),
                         this.getUser());
