@@ -3,25 +3,20 @@ package kz.sdu.bot.service;
 import kz.sdu.entity.Student;
 import kz.sdu.entity.TelegramAccount;
 import kz.sdu.entity.User;
-import kz.sdu.repository.TelegramAccountRepository;
-import kz.sdu.repository.UserRepository;
-import lombok.Getter;
+import kz.sdu.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 //fixme Fix classes
 @Service
-@Getter
 @Slf4j
 public final class AuthorizationTelegramService {
 
-    private final TelegramAccountRepository accountRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    public AuthorizationTelegramService(TelegramAccountRepository accountRepository, UserRepository userRepository) {
-        this.accountRepository = accountRepository;
-        this.userRepository = userRepository;
+    public AuthorizationTelegramService(UserService userService) {
+        this.userService = userService;
     }
 
     public User authLogUser(Update update) {
@@ -37,7 +32,7 @@ public final class AuthorizationTelegramService {
                 "" : update.getMessage().getChat().getBio();
 
         try {
-            User account = userRepository.findUserByTelegramAccount_TelegramId(telegram_id);
+            User account = userService.findUserByTelegramId(telegram_id);
             if (account != null) return account;
         } catch (Exception e) {
             e.printStackTrace();
@@ -53,19 +48,7 @@ public final class AuthorizationTelegramService {
         return addAccount(user);
     }
 
-    private TelegramAccount addAccount(TelegramAccount account) {
-        return accountRepository.save(account);
-    }
-
     private User addAccount(User account) {
-        return userRepository.save(account);
-    }
-
-    public TelegramAccountRepository accountRepository() {
-        return accountRepository;
-    }
-
-    public UserRepository userRepository() {
-        return userRepository;
+        return userService.save(account);
     }
 }

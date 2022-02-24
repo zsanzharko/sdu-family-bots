@@ -12,7 +12,10 @@ import javax.persistence.*;
 @Table(name = "students")
 public class Student extends AbstractBaseEntity{
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(
+            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE},
+            mappedBy = "student"
+    )
     private User user;
 
     @Column(name = "student_id")

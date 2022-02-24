@@ -27,11 +27,11 @@ public class User extends AbstractBaseEntity {
     @Column(name = "phone_number")
     private String phoneNumber; // phone number
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE})
     @JoinColumn(name = "student_id", referencedColumnName = "student_id")
     private Student student;
 
-    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE})
+    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE})
     @JoinColumn(name = "telegram_id", referencedColumnName = "telegram_id")
     private TelegramAccount telegramAccount;
 
@@ -51,13 +51,15 @@ public class User extends AbstractBaseEntity {
         this.telegramAccount = telegramAccount;
         this.name = name;
         this.surname = surname;
+
+        this.student = new Student();
     }
 
     public User(TelegramAccount telegramAccount, String name, String surname, Student student) {
         this.telegramAccount = telegramAccount;
         this.name = name;
         this.surname = surname;
-        this.student = student;
+        this.student = student == null ? new Student() : student;
     }
 
     public User(TelegramAccount telegramAccount) {
@@ -69,7 +71,7 @@ public class User extends AbstractBaseEntity {
                 List<Event> registeredEvents, List<LostItem> lostItems, List<LostItem> foundedItems) {
         this.name = name;
         this.surname = surname;
-        this.student = student;
+        this.student = student == null ? new Student() : student;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.telegramAccount = telegramAccount;
@@ -77,5 +79,11 @@ public class User extends AbstractBaseEntity {
         this.registeredEvents = registeredEvents;
         this.lostItems = lostItems;
         this.foundedItems = foundedItems;
+    }
+
+    public void addTelegramAccount(TelegramAccount account) {
+        if (account != null) {
+            this.telegramAccount = account;
+        }
     }
 }

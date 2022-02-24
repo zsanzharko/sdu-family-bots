@@ -25,7 +25,8 @@ import javax.persistence.*;
 @Table(name = "telegram_accounts")
 public class TelegramAccount extends AbstractBaseEntity {
 
-    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE}, mappedBy = "telegramAccount")
+    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE},
+            mappedBy = "telegramAccount")
     private User user;
 
     @Column(name = "chat_id")

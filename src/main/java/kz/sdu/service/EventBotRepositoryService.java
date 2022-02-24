@@ -3,9 +3,7 @@ package kz.sdu.service;
 import kz.sdu.bot.service.AuthorizationTelegramService;
 import kz.sdu.entity.User;
 import kz.sdu.repository.EventRepository;
-import kz.sdu.repository.TelegramAccountRepository;
 import kz.sdu.repository.TicketRepository;
-import kz.sdu.repository.UserRepository;
 import lombok.Getter;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +24,13 @@ public class EventBotRepositoryService {
     private final UserService userService;
 
     @Autowired
-    public EventBotRepositoryService(
-            UserRepository userRepository, EventRepository eventRepository,
-            TelegramAccountRepository telegramAccountRepository, StudentRepository studentRepository, TicketRepository ticketRepository, UserService userService) {
-        //repositories
+    public EventBotRepositoryService(EventRepository eventRepository,
+            TicketRepository ticketRepository, UserService userService) {
         //repositories
         this.userService = userService;
+
         //services
-        this.authTelegramService = new AuthorizationTelegramService(telegramAccountRepository, userRepository);
+        this.authTelegramService = new AuthorizationTelegramService(userService);
         this.eventService = new EventService(eventRepository);
         this.ticketService = new TicketService(ticketRepository);
     }
