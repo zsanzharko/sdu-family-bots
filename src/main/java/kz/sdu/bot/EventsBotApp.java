@@ -1,5 +1,6 @@
 package kz.sdu.bot;
 
+import kz.sdu.bot.handler.EventBotCommandHandler;
 import kz.sdu.bot.service.EventBotService;
 import kz.sdu.conf.EventBotConfig;
 import kz.sdu.service.EventBotRepositoryService;
@@ -18,6 +19,8 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 @Getter
 public class EventsBotApp extends TelegramLongPollingBot {
 
+    private final EventBotCommandHandler eventBotCommandHandler;
+
     private static EventBotService service;
 
     private final EventBotRepositoryService botService;
@@ -27,6 +30,8 @@ public class EventsBotApp extends TelegramLongPollingBot {
     public EventsBotApp(EventBotRepositoryService botService, EventBotConfig config) {
         this.botService = botService;
         this.config = config;
+        this.eventBotCommandHandler = new EventBotCommandHandler(this.config);
+
         service = new EventBotService(botService);
     }
 
@@ -53,7 +58,8 @@ public class EventsBotApp extends TelegramLongPollingBot {
                     default -> defaultAction(update);
                 }
             }
-        } else if (update.hasCallbackQuery()) {
+        }
+        else if (update.hasCallbackQuery()) {
             String callbackData = update.getCallbackQuery().getData();
 
             if (callbackData.contains("/edit_account")) {
