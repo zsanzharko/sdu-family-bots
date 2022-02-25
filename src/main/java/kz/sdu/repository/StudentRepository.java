@@ -1,4 +1,4 @@
-package kz.sdu.service;
+package kz.sdu.repository;
 
 import kz.sdu.entity.Student;
 import org.springframework.data.jpa.repository.JpaRepository;

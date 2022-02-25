@@ -1,6 +1,7 @@
 package kz.sdu.service;
 
 import kz.sdu.entity.User;
+import kz.sdu.repository.StudentRepository;
 import kz.sdu.repository.TelegramAccountRepository;
 import kz.sdu.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
