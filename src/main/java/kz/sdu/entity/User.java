@@ -27,11 +27,15 @@ public class User extends AbstractBaseEntity {
     @Column(name = "phone_number")
     private String phoneNumber; // phone number
 
-    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE})
+    @OneToOne(
+            cascade = CascadeType.ALL,
+            optional = false)
     @JoinColumn(name = "student_id", referencedColumnName = "student_id")
     private Student student;
 
-    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE})
+    @OneToOne(
+            cascade = CascadeType.ALL,
+            optional = false)
     @JoinColumn(name = "telegram_id", referencedColumnName = "telegram_id")
     private TelegramAccount telegramAccount;
 
@@ -45,7 +49,8 @@ public class User extends AbstractBaseEntity {
     @Transient
     private List<LostItem> foundedItems;
 
-    public User() {}
+    public User() {
+    }
 
     public User(TelegramAccount telegramAccount, String name, String surname) {
         this.telegramAccount = telegramAccount;

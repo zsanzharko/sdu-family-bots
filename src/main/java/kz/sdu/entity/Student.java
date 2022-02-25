@@ -4,7 +4,10 @@ import kz.sdu.enums.Faculty;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 @Entity
 @Getter
@@ -13,8 +16,8 @@ import javax.persistence.*;
 public class Student extends AbstractBaseEntity{
 
     @OneToOne(
-            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE},
-            mappedBy = "student"
+            mappedBy = "student",
+            optional = false
     )
     private User user;
 
