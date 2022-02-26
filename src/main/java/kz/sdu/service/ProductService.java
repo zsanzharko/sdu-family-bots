@@ -1,5 +1,6 @@
 package kz.sdu.service;
 
+import kz.sdu.entity.Product;
 import kz.sdu.repository.ProductRepository;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,5 +15,13 @@ public class ProductService {
     @Autowired
     public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
+    }
+
+    public Product save(Product product) {
+        return productRepository.save(product);
+    }
+
+    public void remove(Product product) {
+        productRepository.delete(product);
     }
 }
