@@ -1,5 +1,6 @@
 package kz.sdu.entity;
 
+import kz.sdu.entity.abstractBase.AbstractBaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -45,9 +46,9 @@ public class User extends AbstractBaseEntity {
     private List<Event> registeredEvents;
 
     @Transient
-    private List<LostItem> lostItems;
+    private List<LostAbstractItem> lostItems;
     @Transient
-    private List<LostItem> foundedItems;
+    private List<LostAbstractItem> foundedItems;
 
     public User() {
     }
@@ -73,7 +74,7 @@ public class User extends AbstractBaseEntity {
 
     public User(String name, String surname, Student student, String email, String phoneNumber,
                 TelegramAccount telegramAccount, List<Event> favoriteEvents,
-                List<Event> registeredEvents, List<LostItem> lostItems, List<LostItem> foundedItems) {
+                List<Event> registeredEvents, List<LostAbstractItem> lostItems, List<LostAbstractItem> foundedItems) {
         this.name = name;
         this.surname = surname;
         this.student = student == null ? new Student() : student;

@@ -1,5 +1,6 @@
 package kz.sdu.entity;
 
+import kz.sdu.entity.abstractBase.AbstractBaseEntity;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -12,7 +13,7 @@ import java.time.LocalTime;
 @Setter
 @Entity
 @Table(name = "events")
-public class Event extends AbstractBaseEntity{
+public class Event extends AbstractBaseEntity {
 
     @Column(name = "image_file_id")
     private Long imageFileId;

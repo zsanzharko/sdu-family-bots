@@ -1,5 +1,6 @@
 package kz.sdu.entity;
 
+import kz.sdu.entity.abstractBase.AbstractItem;
 import kz.sdu.impl.ILostItem;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +18,7 @@ import java.util.List;
         @AttributeOverride(name="name", column = @Column(name = "name")),
         @AttributeOverride(name="description", column = @Column(name = "description"))
 })
-public class LostItem extends Item implements ILostItem {
+public class LostAbstractItem extends AbstractItem implements ILostItem {
     @Transient
     private User user;
 
@@ -27,7 +28,7 @@ public class LostItem extends Item implements ILostItem {
     @Column(name = "is_lost")
     private Boolean isLost = true;
 
-    public LostItem(User user, List<InputFile> photos, String name, String description) {
+    public LostAbstractItem(User user, List<InputFile> photos, String name, String description) {
         super(name, description);
         this.user = user;
         this.isLost = true;
@@ -37,7 +38,7 @@ public class LostItem extends Item implements ILostItem {
         else this.photos = photos;
     }
 
-    public LostItem(User user, InputFile photo, String name, String description) {
+    public LostAbstractItem(User user, InputFile photo, String name, String description) {
         super(name, description);
         this.user = user;
         this.isLost = true;
@@ -50,7 +51,7 @@ public class LostItem extends Item implements ILostItem {
         }
     }
 
-    public LostItem() {
+    public LostAbstractItem() {
     }
 
     @Override

@@ -1,4 +1,4 @@
-package kz.sdu.entity;
+package kz.sdu.entity.abstractBase;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +10,7 @@ import javax.persistence.*;
 
 @Getter
 @Setter
-public class AbstractBaseEntity {
+public abstract class AbstractBaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
