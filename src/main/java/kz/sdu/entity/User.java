@@ -50,6 +50,11 @@ public class User extends AbstractBaseEntity {
     @Transient
     private List<LostAbstractItem> foundedItems;
 
+    @OneToMany(
+            cascade = CascadeType.ALL, fetch = FetchType.LAZY,
+            mappedBy = "user")
+    private List<Product> sellingProduct;
+
     public User() {
     }
 
