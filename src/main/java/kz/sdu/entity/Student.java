@@ -1,5 +1,6 @@
 package kz.sdu.entity;
 
+import kz.sdu.entity.abstractBase.AbstractBaseEntity;
 import kz.sdu.enums.Faculty;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +14,7 @@ import javax.persistence.Table;
 @Getter
 @Setter
 @Table(name = "students")
-public class Student extends AbstractBaseEntity{
+public class Student extends AbstractBaseEntity {
 
     @OneToOne(
             mappedBy = "student",

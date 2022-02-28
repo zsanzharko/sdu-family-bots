@@ -1,5 +1,6 @@
 package kz.sdu.entity;
 
+import kz.sdu.entity.abstractBase.AbstractBaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.telegram.telegrambots.meta.api.objects.ChatLocation;

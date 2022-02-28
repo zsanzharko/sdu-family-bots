@@ -1,15 +1,13 @@
 package kz.sdu.service;
 
-import kz.sdu.entity.LostItem;
+import kz.sdu.entity.LostAbstractItem;
 import kz.sdu.repository.LostItemRepository;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @Getter
@@ -22,15 +20,15 @@ public final class LostItemService {
         this.repository = repository;
     }
 
-    public LostItem findById(Long id) {
+    public LostAbstractItem findById(Long id) {
         return repository.getById(id);
     }
 
-    public List<LostItem> findAll() {
+    public List<LostAbstractItem> findAll() {
         return repository.findAll();
     }
 
-    public LostItem saveLostItem(LostItem item) {
+    public LostAbstractItem saveLostItem(LostAbstractItem item) {
         return repository.save(item);
     }
 
