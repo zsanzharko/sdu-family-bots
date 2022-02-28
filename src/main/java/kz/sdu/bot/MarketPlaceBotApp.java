@@ -1,5 +1,6 @@
 package kz.sdu.bot;
 
+import kz.sdu.bot.handler.MarketPlaceBotCommandHandler;
 import kz.sdu.conf.MarketPlaceBotConfig;
 import kz.sdu.service.MarketPlaceBotService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,13 +40,12 @@ public class MarketPlaceBotApp extends TelegramLongPollingBot {
             final User telegram_user = message.getFrom();
             final String chatId = String.valueOf(message.getChatId());
 
-            kz.sdu.entity.User user = marketPlaceBotService.authUser(update);
+//            kz.sdu.entity.User user = marketPlaceBotService.authUser(update);
 
             if (commandHandler(message.getText())) {
-
+                 new MarketPlaceBotCommandHandler(config, marketPlaceBotService)
+                         .commandHandler(message.getText(), update);
             }
-
-
         }
     }
 
