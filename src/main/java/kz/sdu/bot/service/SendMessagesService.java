@@ -1,16 +1,28 @@
 package kz.sdu.bot.service;
 
-import kz.sdu.entity.TelegramAccount;
 import kz.sdu.bot.utils.InlineKeyboardMarkupTemplate;
 import kz.sdu.entity.User;
-import kz.sdu.service.TelegramAccountService;
+import kz.sdu.service.UserService;
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 import java.util.List;
 
+@Service
 public class SendMessagesService {
-    public static SendMessage sendEditMessage(String callBackData, String chatId) {
+
+    @Getter
+    private final UserService userService;
+
+    @Autowired
+    public SendMessagesService(UserService userService) {
+        this.userService = userService;
+    }
+
+    public SendMessage sendEditMessage(String callBackData, String chatId) {
         String text = "Enter your ";
 
         switch (callBackData) {
@@ -23,8 +35,10 @@ public class SendMessagesService {
         return new SendMessage(chatId,text);
     }
 
-    public static SendMessage getAccountMessageInformation(String chatId, User user) {
-        SendMessage message = new SendMessage(chatId, new TelegramAccountService(user).getInformationAccount());
+    public SendMessage getAccountMessageInformation(String chatId, User user) {
+        SendMessage message = new SendMessage(chatId,
+                userService.getInformationAccountToTelegram(
+                        user.getTelegramAccount().getTelegramId()));
 
         final String[] texts = {"Edit", "Tickets", "❤️Events"};
         final String[] callbacks = {"/edit_account", "/tickets_account", "/liked_events_account&index=" + 0};
@@ -42,8 +56,9 @@ public class SendMessagesService {
         return message;
     }
 
-    public static SendMessage getEditAccountTools(String chatId, User user) {
-        SendMessage message = new SendMessage(chatId, new TelegramAccountService(user).getInformationAccount());
+    public SendMessage getEditAccountTools(String chatId, User user) {
+        SendMessage message = new SendMessage(chatId,
+                userService.getInformationAccountToTelegram(user.getTelegramAccount().getTelegramId()));
 
         final String[] column_one_texts = {"Name", "Surname"};
         final String[] column_one_callbacks = {"/edit_account_name", "/edit_account_surname"};

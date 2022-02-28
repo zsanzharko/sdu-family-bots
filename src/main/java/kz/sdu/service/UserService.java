@@ -1,77 +1,77 @@
 package kz.sdu.service;
 
 import kz.sdu.entity.User;
+import kz.sdu.repository.StudentRepository;
+import kz.sdu.repository.TelegramAccountRepository;
 import kz.sdu.repository.UserRepository;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.FetchType;
-import javax.persistence.MapsId;
-import javax.persistence.OneToOne;
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Getter
-@Setter
+@Transactional
 public class UserService {
 
-    private UserRepository userRepository;
-
-    private User user;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
-    @ToString.Exclude
-    private TelegramAccountService telegramAccountModel;
-
-    private EventService eventService; // service that works with events
-    private LostItemService lostItemService;
-
-    public UserService(User user) {
-        this.user = user;
-    }
-
-    public UserService(User user, TelegramAccountService telegramAccountModel, EventService eventService) {
-        this.user = user;
-        this.telegramAccountModel = telegramAccountModel;
-        this.eventService = eventService;
-    }
+    private final UserRepository userRepository;
+    private final TelegramAccountRepository telegramAccountRepository;
+    private final StudentRepository studentRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, TelegramAccountRepository telegramAccountRepository, StudentRepository studentRepository) {
         this.userRepository = userRepository;
+        this.telegramAccountRepository = telegramAccountRepository;
+        this.studentRepository = studentRepository;
     }
 
-    public boolean setInfoEdit(String command, String text) {
-        text = text.trim();
-        switch (command) {
-            case "/edit_account_name" -> getUser().setName(text);
-            case "/edit_account_surname" -> getUser().setSurname(text);
-            case "/edit_account_student_id" -> {
-                if (User.studentIDChecking(text))
-                    getUser().setStudentID(text);
-                else return false;
-            }
+    public User save(User user) {
+        User db_user = userRepository.findUserByTelegramAccount_TelegramId(user.getTelegramAccount().getTelegramId());
+        if (db_user == null) {
+            telegramAccountRepository.save(user.getTelegramAccount());
+            studentRepository.save(user.getStudent());
+            return userRepository.save(user);
         }
-        return true;
-    }
-
-    public List<User> findPeople(User user) {
-        return userRepository.findAllByStudentID(user.getStudentID());
+        return user;
     }
 
     public User findUserByTelegramId(Long telegramId) {
-        return userRepository.findUserByTelegramAccount_Id(telegramId);
+        return userRepository.findUserByTelegramAccount_TelegramId(telegramId);
     }
 
-    public User saveUser(User user) {
-        return userRepository.save(user);
+    public String getInformationAccountToTelegram(Long telegram_id) {
+        User user = userRepository.findUserByTelegramAccount_TelegramId(telegram_id);
+        if (user == null) return "User doesn't have in database, please authorize";
+
+        String studentId = "don't set";
+        int likedEventsSize = 0;
+        if (user.getStudent() != null)
+         studentId = user.getStudent().getStudentID();
+        if (user.getFavoriteEvents() != null)
+            likedEventsSize = user.getFavoriteEvents().size();
+
+        return "Name: " + user.getName() + "\n" +
+                "Surname: " + user.getSurname() + "\n" +
+                "student ID: " + studentId + "\n" +
+                "Liked Event: " + likedEventsSize;
+
     }
 
-    private void deleteUser(User user) {
+    public void updateAndSave(User user) {
+        User db_user = userRepository.findUserByTelegramAccount_TelegramId(user.getTelegramAccount().getTelegramId());
+        if (user == db_user) {
+            return;
+        }
+        userRepository.save(user);
+    }
+
+    public void delete(User user) {
         userRepository.delete(user);
+    }
+
+    public void deleteByUsername(Long telegramId) {
+        userRepository.deleteUserByTelegramAccount_TelegramId(telegramId);
+    }
+
+    public void deleteById(Long id) {
+        userRepository.deleteById(id);
     }
 }

@@ -1,21 +1,17 @@
 package kz.sdu.repository;
 
 import kz.sdu.entity.User;
-import org.springframework.data.jpa.repository.Lock;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.LockModeType;
 import java.util.List;
 
 @Repository
-public interface UserRepository extends CrudRepository<User, Long> {
-    @Lock(LockModeType.READ)
-    List<User> findAllByStudentID(String studentId);
+public interface UserRepository extends JpaRepository<User, Long> {
 
-    @Lock(LockModeType.READ)
-    User findUserByStudentID(String studentId);
+    User findUserByTelegramAccount_TelegramId(Long telegramId);
 
-    @Lock(LockModeType.READ)
-    User findUserByTelegramAccount_Id(Long telegramId);
+    void deleteUserByTelegramAccount_TelegramId(Long telegramId);
+
+    List<User> findAllByEmail(String email);
 }

@@ -1,12 +1,11 @@
 package kz.sdu.entity;
 
-import lombok.*;
-import org.hibernate.Hibernate;
+import kz.sdu.entity.abstractBase.AbstractBaseEntity;
+import lombok.Getter;
+import lombok.Setter;
 import org.telegram.telegrambots.meta.api.objects.ChatLocation;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.Objects;
 
 /**
  * @apiNote
@@ -23,18 +22,25 @@ import java.util.Objects;
 
 @Getter
 @Setter
-@ToString
-@Entity (name = "TelegramAccount")
+@Entity
 @Table(name = "telegram_accounts")
 public class TelegramAccount extends AbstractBaseEntity {
-    @OneToOne(mappedBy = "telegramAccount")
+
+    @OneToOne(
+            mappedBy = "telegramAccount",
+            optional = false
+    )
     private User user;
 
+    @Column(name = "chat_id")
     private String chatId;          // chat ID bot to account
 
-    @NotNull
-    private Long id;                // unify telegram id account
+    @Column(name = "username")
     private String username;        // telegram username
+
+    @Column(name = "telegram_id")
+    private Long telegramId;
+
 
     @Transient
     private ChatLocation chatLocation;                          // when account was the latest
@@ -47,33 +53,7 @@ public class TelegramAccount extends AbstractBaseEntity {
         this.chatId = chatId;
     }
 
-    public TelegramAccount(Long id, String chatId) {
-        this.id = id;
-        this.username = "null";
-        this.chatId = chatId;
-    }
-
-    public TelegramAccount(Long id, String chatId, String username, ChatLocation chatLocation) {
-        this.id = id;
-        this.username = username;
-        this.chatLocation = chatLocation;
-        this.chatId = chatId;
-    }
-
     public TelegramAccount() {
 
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        TelegramAccount telegramAccount = (TelegramAccount) o;
-        return id != null && Objects.equals(id, telegramAccount.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
     }
 }

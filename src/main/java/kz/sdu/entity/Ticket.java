@@ -1,31 +1,43 @@
 package kz.sdu.entity;
 
-import lombok.Data;
+import kz.sdu.entity.abstractBase.AbstractBaseEntity;
+import lombok.Getter;
+import lombok.Setter;
 import org.telegram.telegrambots.meta.api.objects.Document;
 import org.telegram.telegrambots.meta.api.objects.File;
 
-@Data
-public class Ticket {
-    private final Long ID;
+import javax.persistence.*;
+
+@Getter
+@Setter
+@Entity
+@Table(name = "tickets")
+public class Ticket extends AbstractBaseEntity {
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Event event;
+
+    @Transient
     private Document documentTicket;
+
+//    @Column(name = "file_ticket")
+    @Transient
     private File fileTicket;
-    private boolean paid = false;
-    private double cost; // KZT. 450 tg min cost
-    private int countPeople;
 
-    public Ticket(long ID, int count) {
-        this.ID = ID;
-        this.countPeople = count;
+    @Column(name = "cost", nullable = false)
+    private float cost; // KZT. 450 tg min cost
+
+    @Column(name = "available_count")
+    private int availableCountPeople;
+
+    @Column(name = "total_count")
+    private int totalCountPeople;
+
+    public Ticket(int totalCountPeople) {
+        this.totalCountPeople = totalCountPeople;
     }
 
-    public void paying(boolean paid, double cost) {
-        setPaid(paid);
-        setCost(cost);
-    }
+    public Ticket() {
 
-    private void setCost(double cost) {
-        if (paid && cost > 450.0 && cost < 4_369_647.00)
-            this.cost = cost;
-        else this.cost = 0;
     }
 }

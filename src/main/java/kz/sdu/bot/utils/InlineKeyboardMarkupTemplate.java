@@ -1,16 +1,18 @@
 package kz.sdu.bot.utils;
 
-import kz.sdu.bot.service.SendMessagesService;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class InlineKeyboardMarkupTemplate extends SendMessagesService {
+public class InlineKeyboardMarkupTemplate {
 
     private final InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
     private final List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
+
+    public InlineKeyboardMarkupTemplate() {
+    }
 
     public List<List<InlineKeyboardButton>> getButtons() {
         return buttons;

@@ -1,19 +1,16 @@
 package kz.sdu.entity;
 
-import lombok.*;
-import org.hibernate.Hibernate;
+import kz.sdu.entity.abstractBase.AbstractBaseEntity;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Getter
 @Setter
-@ToString
 @Entity(name = "User")
-@Table(name = "users")
+@Table(name = "Users")
 public class User extends AbstractBaseEntity {
 
     @Column(name = "name")
@@ -22,8 +19,8 @@ public class User extends AbstractBaseEntity {
     @Column(name = "surname")
     private String surname;     // user surname
 
-    @Column(name = "student_id")
-    private String studentID;   // student id
+    @Column(name = "bio")
+    private String bio;
 
     @Column(name = "email")
     private String email; // email
@@ -31,7 +28,15 @@ public class User extends AbstractBaseEntity {
     @Column(name = "phone_number")
     private String phoneNumber; // phone number
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(
+            cascade = CascadeType.ALL,
+            optional = false)
+    @JoinColumn(name = "student_id", referencedColumnName = "student_id")
+    private Student student;
+
+    @OneToOne(
+            cascade = CascadeType.ALL,
+            optional = false)
     @JoinColumn(name = "telegram_id", referencedColumnName = "telegram_id")
     private TelegramAccount telegramAccount;
 
@@ -41,35 +46,43 @@ public class User extends AbstractBaseEntity {
     private List<Event> registeredEvents;
 
     @Transient
-    private List<LostItem> lostItems;
+    private List<LostAbstractItem> lostItems;
     @Transient
-    private List<LostItem> foundedItems;
+    private List<LostAbstractItem> foundedItems;
 
-    public User() {}
+    @OneToMany(
+            cascade = CascadeType.ALL, fetch = FetchType.LAZY,
+            mappedBy = "user")
+    private List<Product> sellingProduct;
+
+    public User() {
+    }
 
     public User(TelegramAccount telegramAccount, String name, String surname) {
         this.telegramAccount = telegramAccount;
         this.name = name;
         this.surname = surname;
+
+        this.student = new Student();
     }
 
-    public User(TelegramAccount telegramAccount, String name, String surname, String studentID) {
+    public User(TelegramAccount telegramAccount, String name, String surname, Student student) {
         this.telegramAccount = telegramAccount;
         this.name = name;
         this.surname = surname;
-        this.studentID = studentID;
+        this.student = student == null ? new Student() : student;
     }
 
     public User(TelegramAccount telegramAccount) {
         this.telegramAccount = telegramAccount;
     }
 
-    public User(String name, String surname, String studentID, String email, String phoneNumber,
+    public User(String name, String surname, Student student, String email, String phoneNumber,
                 TelegramAccount telegramAccount, List<Event> favoriteEvents,
-                List<Event> registeredEvents, List<LostItem> lostItems, List<LostItem> foundedItems) {
+                List<Event> registeredEvents, List<LostAbstractItem> lostItems, List<LostAbstractItem> foundedItems) {
         this.name = name;
         this.surname = surname;
-        this.studentID = studentID;
+        this.student = student == null ? new Student() : student;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.telegramAccount = telegramAccount;
@@ -79,22 +92,9 @@ public class User extends AbstractBaseEntity {
         this.foundedItems = foundedItems;
     }
 
-    public static boolean studentIDChecking(String studentID) {
-        Pattern pattern = Pattern.compile("^[0-9]{9}$");
-        Matcher matcher = pattern.matcher(studentID);
-        return matcher.find();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        User user = (User) o;
-        return id != null && Objects.equals(id, user.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
+    public void addTelegramAccount(TelegramAccount account) {
+        if (account != null) {
+            this.telegramAccount = account;
+        }
     }
 }

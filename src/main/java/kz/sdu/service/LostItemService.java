@@ -1,27 +1,34 @@
 package kz.sdu.service;
 
-import kz.sdu.entity.LostItem;
+import kz.sdu.entity.LostAbstractItem;
 import kz.sdu.repository.LostItemRepository;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public record LostItemService(LostItemRepository repository) {
+@Getter
+@Setter
+public final class LostItemService {
+    private final LostItemRepository repository;
+
     @Autowired
-    public LostItemService {
+    public LostItemService(LostItemRepository repository) {
+        this.repository = repository;
     }
 
-    public LostItem findById(Long id) {
+    public LostAbstractItem findById(Long id) {
         return repository.getById(id);
     }
 
-    public List<LostItem> findAll() {
+    public List<LostAbstractItem> findAll() {
         return repository.findAll();
     }
 
-    public LostItem saveLostItem(LostItem item) {
+    public LostAbstractItem saveLostItem(LostAbstractItem item) {
         return repository.save(item);
     }
 
