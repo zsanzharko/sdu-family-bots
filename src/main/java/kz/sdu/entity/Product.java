@@ -1,12 +1,14 @@
 package kz.sdu.entity;
 
+import kz.sdu.entity.abstractBase.AbstractItem;
+
 import javax.persistence.*;
 import java.io.File;
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "products")
-public class Product extends Item {
+public class Product extends AbstractItem {
 
     @ManyToOne
     private User user;
